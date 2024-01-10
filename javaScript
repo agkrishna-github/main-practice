@@ -5,6 +5,8 @@ one - querySelectorAll-forEach
 
 ...............................................
 
+one -
+
 <button class="btn">random button</button>
 <button class="btn">random button</button>
     <script>
