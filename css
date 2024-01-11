@@ -121,6 +121,10 @@ display: grid;
 
 ..............
 
+  background: url('./hero.jpeg') center/cover no-repeat;
+
+.................................
+
 
 overflow: visible; 
 
