@@ -115,6 +115,12 @@ display: grid;
 
 ..........
 
+.nav-toggle:hover {
+  transform: rotate(90deg);
+}
+
+..............
+
 
 overflow: visible; 
 
