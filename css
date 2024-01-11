@@ -141,13 +141,58 @@ border: transparent;
 
 text-transform: capitalize;
 
+.............................
+
+.timeline-item:nth-child(even) .number {
+  left: 0;
+}
+
+............................
+
+.timeline-item:nth-child(odd) .number {
+  right: 0;
+  -webkit-transform: translate(50%, -50%);
+  transform: translate(50%, -50%);
+}
+
+....................
+
+transform: rotateY(180deg);
+
+.....................
+
  height: 0;
 overflow: hidden;
 
 display: grid;
   gap: 2rem 1rem;
 
+...................
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 3rem 1rem;
+
+.....................
+
  order: 1;
+
+.......................
+
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
+........................
+
+min-height: calc(100vh - 5rem - 198px);
+....................
+
+transform: translate(-50%, 50%);
+
+...................
+
+transform: translateX(0);
+
+....................
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -160,6 +205,39 @@ display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
    row-gap: 2rem;
+
+.................................
+
+.projects-center {
+    grid-template-rows: 200px 200px;
+    gap: 1rem;
+    grid-template-areas:
+      'a b b'
+      'a c d';
+  }
+
+.project-1 {
+    grid-area: a;
+  }
+  .project-2 {
+    grid-area: b;
+  }
+  .project-3 {
+    grid-area: c;
+  }
+  .project-4 {
+    grid-area: d;
+  }
+
+...........................
+
+.projects-page-center {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 3rem 1rem;
+}
+
+..................................
 
  flex-wrap: wrap;
 
