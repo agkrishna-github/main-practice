@@ -150,6 +150,32 @@ date.innerHTML = new Date().getFullYear();
 
 ...........................
 
+INCLUDE METHOD:
+
+const groceries = ["milk", "bread", "meat"];
+
+let randomItem = "lemon";
+
+const isIncluded = groceries.includes(randomItem);
+console.log(isIncluded);
+
+......
+
+const groceries = ["milk", "bread", "meat"];
+
+let randomItem = "lemon";
+randomItem = "milk";
+
+if (groceries.includes(randomItem)) {
+  console.log("Yes it is in list");
+}
+
+..........................
+
+ARRAYFROM METHOD:
+
+
+
 
 
 
