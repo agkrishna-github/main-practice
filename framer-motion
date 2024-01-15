@@ -1,0 +1,175 @@
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: 0}}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+.......................
+
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: 0}}
+            transition={{
+            duration:2,
+            delay:1
+            }}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+.......................
+
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: [900, 0]}}
+            transition={{
+            duration:3,
+            delay:1
+            }}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+
+.......................
+
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: [0, 900, 0]}}
+            transition={{
+            duration:3,
+            delay:1
+            }}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+
+.......................
+
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: [0, 900, 0]}}
+            transition={{
+            duration:3,
+            delay:1
+            }}
+            whileHover= {{scale: 0.5}}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+
+.......................
+
+npm install framer-motion
+
+import { motion } from 'framer-motion';
+
+function framerMotion (){
+    return(
+        <motion.h1
+            initial={{x: -1000}}
+            animate={{x: [0, 900, 0]}}
+            transition={{
+            duration:3,
+            delay:1
+            }}
+            whileHover= {{scale: 0.5, opacity: 0.2}}
+        >
+            This is framer motion subject
+        </motion.h1>
+    )
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+import {motion, AnimatePresence} from 'framer-motion';
+
+
+function frameranimation (){
+const [show, setShow] = useState(true);
+
+    return(
+    <div
+      style={{display:"flex", displayDirection:"column", gap: "10px"}}
+    >
+    <h1 style={{}}>
+      Exit Motion
+    </h1>
+
+    <AnimatePresence>
+      { show && <motion.div
+        initial={{opacity:0, x:50}}
+        animate={{opacity: 1, x:100}}
+        exit={{opacity: 0, x: -150}}
+        transition={{
+        duration:1,
+        }}
+      >
+      </motion.div>}
+    </AnimatePresence>
+    <button onClick={()=> setShow(!show)}>{show ? "Remove Box":"Add Box"}</button>
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
