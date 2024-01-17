@@ -1,1 +1,422 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+export const apiSlice = createApi({
+    reducerPath: 'api',
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3500' }),
+    tagTypes: ['Todos'],
+    endpoints: (builder) => ({
+        getTodos: builder.query({
+            query: () => '/todos',
+            transformResponse: res => res.sort((a, b) => b.id - a.id),
+            providesTags: ['Todos']
+        }),
+        addTodo: builder.mutation({
+            query: (todo) => ({
+                url: '/todos',
+                method: 'POST',
+                body: todo
+            }),
+            invalidatesTags: ['Todos']
+        }),
+        updateTodo: builder.mutation({
+            query: (todo) => ({
+                url: `/todos/${todo.id}`,
+                method: 'PATCH',
+                body: todo
+            }),
+            invalidatesTags: ['Todos']
+        }),
+        deleteTodo: builder.mutation({
+            query: ({ id }) => ({
+                url: `/todos/${id}`,
+                method: 'DELETE',
+                body: id
+            }),
+            invalidatesTags: ['Todos']
+        }),
+    })
+})
+
+export const {
+    useGetTodosQuery,
+    useAddTodoMutation,
+    useUpdateTodoMutation,
+    useDeleteTodoMutation
+} = apiSlice
+
+...........................
+
+import {
+    useGetTodosQuery,
+    useUpdateTodoMutation,
+    useDeleteTodoMutation,
+    useAddTodoMutation
+} from "../api/apiSlice"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
+import { useState } from "react"
+
+const TodoList = () => {
+    const [newTodo, setNewTodo] = useState('')
+
+    const {
+        data: todos,
+        isLoading,
+        isSuccess,
+        isError,
+        error
+    } = useGetTodosQuery()
+    const [addTodo] = useAddTodoMutation()
+    const [updateTodo] = useUpdateTodoMutation()
+    const [deleteTodo] = useDeleteTodoMutation()
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        addTodo({ userId: 1, title: newTodo, completed: false })
+        setNewTodo('')
+    }
+
+    const newItemSection =
+        <form onSubmit={handleSubmit}>
+            <label htmlFor="new-todo">Enter a new todo item</label>
+            <div className="new-todo">
+                <input
+                    type="text"
+                    id="new-todo"
+                    value={newTodo}
+                    onChange={(e) => setNewTodo(e.target.value)}
+                    placeholder="Enter new todo"
+                />
+            </div>
+            <button className="submit">
+                <FontAwesomeIcon icon={faUpload} />
+            </button>
+        </form>
+
+
+    let content;
+    if (isLoading) {
+        content = <p>Loading...</p>
+    } else if (isSuccess) {
+        content = todos.map(todo => { //JSON.stringify(todos)
+            return (
+                <article key={todo.id}>
+                    <div className="todo">
+                        <input
+                            type="checkbox"
+                            checked={todo.completed}
+                            id={todo.id}
+                            onChange={() => updateTodo({ ...todo, completed: !todo.completed })}
+                        />
+                        <label htmlFor={todo.id}>{todo.title}</label>
+                    </div>
+                    <button className="trash" onClick={() => deleteTodo({ id: todo.id })}>
+                        <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                </article>
+            )
+        })
+    } else if (isError) {
+        content = <p>{error}</p>
+    }
+
+    return (
+        <main>
+            <h1>Todo List</h1>
+            {newItemSection}
+            {content}
+        </main>
+    )
+}
+export default TodoList
+
+.............................
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+import { ApiProvider } from "@reduxjs/toolkit/query/react";
+import { apiSlice } from "./features/api/apiSlice";
+
+ReactDOM.createRoot(document.getElementById('root'))
+  .render(
+    <React.StrictMode>
+      <ApiProvider api={apiSlice}>
+        <App />
+      </ApiProvider>
+    </React.StrictMode>
+  );
+
+....................................
+
+import TodoList from "./features/todos/TodoList";
+
+function App() {
+  return <TodoList />
+}
+
+export default App;
+
+..........................
+
+METHOD : 2
+
+import { configureStore } from "@reduxjs/toolkit";
+import { apiSlice } from '../features/api/apiSlice';
+
+export const store = configureStore({
+    reducer: {
+        [apiSlice.reducerPath]: apiSlice.reducer
+    },
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().concat(apiSlice.middleware),
+    devTools: true
+})
+
+......................
+
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+export const apiSlice = createApi({
+    reducerPath: 'api', // optional
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3500' }),
+    tagTypes: ['Post', 'User'],
+    endpoints: builder => ({})
+})
+
+...........................
+
+import { useAddNewPostMutation } from "./postsSlice";
+
+const [addNewPost, { isLoading }] = useAddNewPostMutation()
+
+ await addNewPost({ title, body: content, userId }).unwrap()
+
+......................
+
+import {
+    createSelector,
+    createEntityAdapter
+} from "@reduxjs/toolkit";
+import { sub } from 'date-fns';
+import { apiSlice } from "../api/apiSlice";
+
+const postsAdapter = createEntityAdapter({
+    sortComparer: (a, b) => b.date.localeCompare(a.date)
+})
+
+const initialState = postsAdapter.getInitialState()
+
+export const extendedApiSlice = apiSlice.injectEndpoints({
+    endpoints: builder => ({
+        getPosts: builder.query({
+            query: () => '/posts',
+            transformResponse: responseData => {
+                let min = 1;
+                const loadedPosts = responseData.map(post => {
+                    if (!post?.date) post.date = sub(new Date(), { minutes: min++ }).toISOString();
+                    if (!post?.reactions) post.reactions = {
+                        thumbsUp: 0,
+                        wow: 0,
+                        heart: 0,
+                        rocket: 0,
+                        coffee: 0
+                    }
+                    return post;
+                });
+                return postsAdapter.setAll(initialState, loadedPosts)
+            },
+            providesTags: (result, error, arg) => [
+                { type: 'Post', id: "LIST" },
+                ...result.ids.map(id => ({ type: 'Post', id }))
+            ]
+        }),
+        getPostsByUserId: builder.query({
+            query: id => `/posts/?userId=${id}`,
+            transformResponse: responseData => {
+                let min = 1;
+                const loadedPosts = responseData.map(post => {
+                    if (!post?.date) post.date = sub(new Date(), { minutes: min++ }).toISOString();
+                    if (!post?.reactions) post.reactions = {
+                        thumbsUp: 0,
+                        wow: 0,
+                        heart: 0,
+                        rocket: 0,
+                        coffee: 0
+                    }
+                    return post;
+                });
+                return postsAdapter.setAll(initialState, loadedPosts)
+            },
+            providesTags: (result, error, arg) => [
+                ...result.ids.map(id => ({ type: 'Post', id }))
+            ]
+        }),
+        addNewPost: builder.mutation({
+            query: initialPost => ({
+                url: '/posts',
+                method: 'POST',
+                body: {
+                    ...initialPost,
+                    userId: Number(initialPost.userId),
+                    date: new Date().toISOString(),
+                    reactions: {
+                        thumbsUp: 0,
+                        wow: 0,
+                        heart: 0,
+                        rocket: 0,
+                        coffee: 0
+                    }
+                }
+            }),
+            invalidatesTags: [
+                { type: 'Post', id: "LIST" }
+            ]
+        }),
+        updatePost: builder.mutation({
+            query: initialPost => ({
+                url: `/posts/${initialPost.id}`,
+                method: 'PUT',
+                body: {
+                    ...initialPost,
+                    date: new Date().toISOString()
+                }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Post', id: arg.id }
+            ]
+        }),
+        deletePost: builder.mutation({
+            query: ({ id }) => ({
+                url: `/posts/${id}`,
+                method: 'DELETE',
+                body: { id }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Post', id: arg.id }
+            ]
+        }),
+        addReaction: builder.mutation({
+            query: ({ postId, reactions }) => ({
+                url: `posts/${postId}`,
+                method: 'PATCH',
+                // In a real app, we'd probably need to base this on user ID somehow
+                // so that a user can't do the same reaction more than once
+                body: { reactions }
+            }),
+            async onQueryStarted({ postId, reactions }, { dispatch, queryFulfilled }) {
+                // `updateQueryData` requires the endpoint name and cache key arguments,
+                // so it knows which piece of cache state to update
+                const patchResult = dispatch(
+                    extendedApiSlice.util.updateQueryData('getPosts', undefined, draft => {
+                        // The `draft` is Immer-wrapped and can be "mutated" like in createSlice
+                        const post = draft.entities[postId]
+                        if (post) post.reactions = reactions
+                    })
+                )
+                try {
+                    await queryFulfilled
+                } catch {
+                    patchResult.undo()
+                }
+            }
+        })
+    })
+})
+
+export const {
+    useGetPostsQuery,
+    useGetPostsByUserIdQuery,
+    useAddNewPostMutation,
+    useUpdatePostMutation,
+    useDeletePostMutation,
+    useAddReactionMutation
+} = extendedApiSlice
+
+
+
+// returns the query result object
+export const selectPostsResult = extendedApiSlice.endpoints.getPosts.select()
+
+// Creates memoized selector
+const selectPostsData = createSelector(
+    selectPostsResult,
+    postsResult => postsResult.data // normalized state object with ids & entities
+)
+
+//getSelectors creates these selectors and we rename them with aliases using destructuring
+export const {
+    selectAll: selectAllPosts,
+    selectById: selectPostById,
+    selectIds: selectPostIds
+    // Pass in a selector that returns the posts slice of state
+} = postsAdapter.getSelectors(state => selectPostsData(state) ?? initialState)
+
+.............................
+
+import {
+    createSelector,
+    createEntityAdapter
+} from "@reduxjs/toolkit";
+import { apiSlice } from "../api/apiSlice";
+
+const usersAdapter = createEntityAdapter()
+
+const initialState = usersAdapter.getInitialState()
+
+export const usersApiSlice = apiSlice.injectEndpoints({
+    endpoints: builder => ({
+        getUsers: builder.query({
+            query: () => '/users',
+            transformResponse: responseData => {
+                return usersAdapter.setAll(initialState, responseData)
+            },
+            providesTags: (result, error, arg) => [
+                { type: 'User', id: "LIST" },
+                ...result.ids.map(id => ({ type: 'User', id }))
+            ]
+        })
+    })
+})
+
+export const {
+    useGetUsersQuery
+} = usersApiSlice
+
+// returns the query result object
+export const selectUsersResult = usersApiSlice.endpoints.getUsers.select()
+
+// Creates memoized selector
+const selectUsersData = createSelector(
+    selectUsersResult,
+    usersResult => usersResult.data // normalized state object with ids & entities
+)
+
+//getSelectors creates these selectors and we rename them with aliases using destructuring
+export const {
+    selectAll: selectAllUsers,
+    selectById: selectUserById,
+    selectIds: selectUserIds
+    // Pass in a selector that returns the posts slice of state
+} = usersAdapter.getSelectors(state => selectUsersData(state) ?? initialState)
+
+................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
