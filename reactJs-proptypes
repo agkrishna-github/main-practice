@@ -1,0 +1,16 @@
+import PropTypes from "prop-types";
+
+const Products = () => {
+  return (
+    <div>
+    
+    </div>
+  )
+
+  
+Products.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  getProducts: PropTypes.func.isRequired
+};
+}
