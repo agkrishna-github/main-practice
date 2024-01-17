@@ -1,3 +1,176 @@
 npm install react-redux redux
 
+import React from 'react';
+
+function CakeContainer (){
+    return (
+        <div>
+
+        </div>
+    )
+}
+
+
+export const BUY_CAKE = "BUY_CAKE";
+
+export const buyCake =() => {
+  return {
+    type: BUY_CAKE
+  }
+}
+
+const initialState = {
+    numOfCakes: 10
+}
+
+export const cakeReducer = (state = initialState, action) => {
+    switch(action.type){
+        case BUY_CAKE:
+            return {
+                ...state,
+                numOfCakes: state.numOfCakes - 1
+            }
+            default: return state
+    }
+}
+
+import { createStore } from 'redux'
+import cakeReducer from 'cakeReducer'
+
+export default const store = createStore(cakeReducer)
+
+import { Provider } from 'react-redux';
+import { store } from 'store';
+
+<Provider store={store}>
+
+</Provider>
+
+
+const mapStateToProps = (state) => {
+    return {
+        numOfCakes: state.numOfCakes
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        buyCake: ()=> dispatch(buyCake())
+    }
+}
+
+import { connect } from 'react-redux';
+
+export default connect(mapStateToProps, mapDispatchToProps)(CakeContainer)
+
+<div>{props.numOfCakes}</div>
+
+<button onclick={props.buyCake}>Buy cake</button>
+
+
+.....................................
+
+import { useSelector } from 'react-redux';
+
+const numOfCakes = useSelector(state => state.numOfCakes)
+
+................................
+
+import { useSelector, useDispatch } from 'react-redux';
+
+const numOfCakes = useSelector(state => state.numOfCakes)
+const dispatch = useDispatch()
+
+
+<button onclick={()=> dispatch(buyCake())}>Buy cake</button>
+
+..................................
+
+import { combineReducers } from 'redux';
+import cakeReducer from 'cakeReducer'
+import iceCreamReducer from 'iceCreamReducer'
+
+
+export default const rootReducer = () => combineReducers({
+    cake: cakeReducer,
+    iceCream: iceCreamReducer
+})
+
+.......................................
+
+
+import { createStore } from 'redux'
+import rootReducer from 'rootReducer'
+
+export default const store = createStore(rootReducer)
+
+...................................
+
+
+import { createStore, applyMiddleware } from 'redux'
+import logger from 'redux-logger'
+import rootReducer from 'rootReducer'
+
+export default const store = createStore(rootReducer, applyMiddleware(logger))
+
+......................
+
+npm install --save redux-devtools-extension
+
+import { createStore, applyMiddleware } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import logger from 'redux-logger'
+import rootReducer from 'rootReducer'
+
+export default const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger)))
+
+...............................
+
+
+const mapStatetoProps = (state, ownProps) => {
+    const itemState = ownProps.cake ? state.cake.numOfCakes : state.iceCream.numOfIcecream
+    return {
+        item: itemState
+    }
+}
+
+.............................
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    const dispatchFunction = ownProps.cake
+      ? () => dispatch(buyCake())
+      : () => dispatch(buyIceCream()); 
+
+      return {
+        buyIceCream: dispatchFunction
+      }
+}
+
+
+export default connect(null, mapDispatchToProps)(cakeContainer)
+
+.........................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
