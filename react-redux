@@ -226,6 +226,104 @@ export default const rootReducer = () => combineReducers({
 
 npm install axios redux-thunk
 
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import logger from 'redux-logger'
+import rootReducer from 'rootReducer'
+
+export default const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger, thunk)))
+
+function UserContainer () {
+    return(
+        <div>
+
+        </div>
+    )
+}
+
+export const FETCH_USER_REQUEST = "FETCH_USER_REQUEST";
+export const FETCH_USER_SUCCESS = "FETCH_USER_SUCCESS";
+export const FETCH_USER_FAILURE = "FETCH_USER_FAILURE";
+
+
+export const fetchUsersRequest = () => {
+    return {
+        type: FETCH_USER_REQUEST
+    }
+}
+
+export const fetchUsersSuccess = (users) => {
+    return {
+        type: FETCH_USER_SUCCESS,
+        payload: users
+    }
+}
+
+export const fetchUsersFailure = (error) => {
+    return {
+        type: FETCH_USER_FAILURE,
+        payload: error
+    }
+}
+
+const initialState = {
+    loading: false,
+    users: [],
+    error: ''
+}
+
+export const fetchUsers = () => {
+    return (dispatch) => {
+        dispatch(fetchUsersRequest())
+        axios.get('jsonplaceholdersite')
+        .then(response => {
+            dispatch(fetchUsersSuccess(response.data))
+        }).catch(error => {
+            dispatch(fetchUsersFailure(error.message))
+        })
+
+    }
+}
+
+useEffect(()=>{
+    fetchUsers()
+},[])
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_USERS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case FETCH_USERS_SUCCESS:
+      return {
+        loading: false,
+        users: action.payload,
+        error: "",
+      };
+
+    case FETCH_USERS_FAILURE:
+      return {
+        loading: false,
+        users: [],
+        error: action.payload,
+      }
+      default: return state
+  }
+};
+
+
+export default const rootReducer = () => combineReducers({
+    cake: cakeReducer,
+    iceCream: iceCreamReducer,
+    user: userReducer
+})
+
+........................
+
 
 
 
