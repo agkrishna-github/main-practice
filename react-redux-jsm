@@ -1,0 +1,289 @@
+// Provider, connect - react-redux
+
+import React from "react";
+import Counter from "./Counter";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { Provider } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import Modal from "./Modal";
+import Products from "./Products";
+
+import countReducer from "./countReducer";
+import modalReducer from "./modalReducer";
+import productReducer from "./productReducer";
+import { getProducts } from "./actions";
+const middleware = [thunk];
+// setup store
+const store = createStore(
+  combineReducers({
+    countState: countReducer,
+    modalState: modalReducer,
+    productState: productReducer
+  }),
+  composeWithDevTools(applyMiddleware(...middleware))
+);
+// store.dispatch(getProducts());
+const App = () => {
+  return (
+    <Provider store={store}>
+      <Counter />
+      <Modal />
+      <Products />
+    </Provider>
+  );
+};
+
+export default App;
+
+..........................
+
+import React from "react";
+import { connect } from "react-redux";
+import { DECREASE, RESET, INCREASE, MODAL_OPEN } from "./actions";
+import { modalOpen } from "./actions";
+function Counter({ name, count, increase, decrease, reset }) {
+  return (
+    <div className="container">
+      <div>
+        <h1>counter</h1>
+        <h2>{name}</h2>
+        <p className="counter">{count}</p>
+        <div className="buttons">
+          <button type="button" className="btn" onClick={decrease}>
+            decrease
+          </button>
+          <button type="button" className="btn" onClick={reset}>
+            reset
+          </button>
+          <button type="button" className="btn" onClick={increase}>
+            increase
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+function mapStateToProps(state) {
+  return { count: state.countState.count, name: state.countState.name };
+}
+function mapDispatchToProps(dispatch, ownProps) {
+  // console.log(ownProps);
+
+  return {
+    increase: () => dispatch({ type: INCREASE }),
+    decrease: () => dispatch({ type: DECREASE }),
+    reset: () => {
+      dispatch({ type: RESET });
+      dispatch(
+        modalOpen(
+          "susan",
+          " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam sed quis totam saepe mollitia tempore, modi eveniet repellat! Odio, non!"
+        )
+      );
+      // dispatch({
+      //   type: MODAL_OPEN,
+      //   payload: { name: "bob", text: "hello there user" }
+      // });
+    }
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter);
+
+.........................................
+
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { MODAL_CLOSE } from "./actions";
+const Modal = ({ isOpen, name, text, close }) => {
+  // const isOpen = true;
+  return (
+    <div className={`modal-overlay ${isOpen ? `isModalOpen` : null}`}>
+      <div className="modal-container">
+        <h4>{name}</h4>
+        <p>{text}</p>
+        <button className="btn btn-primary" onClick={close}>
+          close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+Modal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  close: PropTypes.func.isRequired
+};
+function mapStateToProps({ modalState: { isOpen, name, text } }) {
+  return { isOpen, name, text };
+}
+function mapDispatchToProps(dispatch) {
+  return { close: () => dispatch({ type: MODAL_CLOSE }) };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+
+...........................................
+
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getProducts } from "./actions";
+const Products = ({ getProducts, loading, products }) => {
+  React.useEffect(() => {
+    getProducts();
+  }, [getProducts]);
+  if (loading) {
+    return <h2 className="section-title">Loading...</h2>;
+  }
+  return (
+    <section className="section">
+      <h2 className="section-title">our products</h2>
+      <ul className="products">
+        {products.map(item => {
+          return (
+            <li key={item.id} className="product">
+              <img src={item.image.url} alt={item.title} />
+              <h4>{item.title}</h4>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+};
+
+Products.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  getProducts: PropTypes.func.isRequired
+};
+const mapStateToProps = ({ productState: { products, loading } }) => {
+  return { loading, products };
+};
+export default connect(mapStateToProps, { getProducts })(Products);
+
+.................................
+
+// count actions
+export const DECREASE = "DECREASE";
+export const INCREASE = "INCREASE";
+export const RESET = "RESET";
+// modal actions
+export const MODAL_OPEN = "MODAL_OPEN";
+export const MODAL_CLOSE = "MODAL_CLOSE";
+// products actions
+export const SET_LOADING = "SET_LOADING";
+export const GET_PRODUCTS = "GET_PRODUCTS";
+// action creators
+export const modalOpen = (name, text) => {
+  return { type: MODAL_OPEN, payload: { name, text } };
+};
+
+export const setLoading = () => {
+  return { type: SET_LOADING };
+};
+export const getProducts = () => {
+  return async function(dispatch) {
+    dispatch(setLoading());
+    const response = await fetch(
+      "https://johnsmilgatutorials.com/projects/react-tech-store-v2/products"
+    );
+    const data = await response.json();
+    dispatch({ type: GET_PRODUCTS, payload: data });
+  };
+};
+
+.....................................
+
+import { DECREASE, RESET, INCREASE } from "./actions";
+const defaultState = {
+  count: 0,
+  name: "john"
+};
+export default function reducer(state = defaultState, action) {
+  switch (action.type) {
+    case DECREASE:
+      return { ...state, count: state.count - 1 };
+    case INCREASE:
+      return { ...state, count: state.count + 1 };
+    case RESET:
+      return { ...state, count: 0 };
+    default:
+      return state;
+  }
+}
+
+..............................
+
+import { MODAL_OPEN, MODAL_CLOSE } from "./actions";
+
+const defaultSate = {
+  isOpen: false,
+  name: "",
+  text: ""
+};
+
+export default function modalReducer(state = defaultSate, action) {
+  if (action.type === MODAL_OPEN) {
+    return {
+      ...state,
+      isOpen: true,
+      name: action.payload.name,
+      text: action.payload.text
+    };
+  }
+  if (action.type === MODAL_CLOSE) {
+    return { ...state, isOpen: false, name: "", text: "" };
+  }
+  return state;
+}
+
+..............................
+
+import { SET_LOADING, GET_PRODUCTS } from "./actions";
+
+const defaultState = {
+  loading: false,
+  products: []
+};
+
+export default function(state = defaultState, action) {
+  if (action.type === SET_LOADING) {
+    return { ...state, loading: true };
+  }
+  if (action.type === GET_PRODUCTS) {
+    return { ...state, loading: false, products: action.payload };
+  }
+  return state;
+}
+
+..........................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
