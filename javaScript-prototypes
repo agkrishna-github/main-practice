@@ -29,3 +29,99 @@ const tea = new createUser("tea", 25);
 chai.printMe();
 
 ...............................
+
+let myHeroes = ["thor", "spiderman"]
+
+let heroPower = {
+    thor: "hammer",
+    spiderman: "sling",
+
+    getSpiderPower: function(){
+        console.log(`spider man power is ${this.spiderman}`)
+    }
+}
+
+Object.prototype.krishna = function(){
+    console.log(`krishna is present`)
+}
+
+heroPower.krishna()
+myHeroes.krishna()
+
+......................................
+
+
+Array.prototype.heykrishna = function () {
+    console.log(`krishna is present`);
+};
+heroPower.heykrishna();
+myHeroes.heykrishna();
+
+..............................
+
+// inheritance
+
+const User = {
+    name: "chai",
+    email: "chai@gmail.com"
+}
+
+const Teacher = {
+    makeVideo: true
+}
+
+const TeachingSupport = {
+    isAvailable: false
+}
+
+const TAsupport = {
+    makeAssignment: "js assgignment",
+    fullTime: true,
+    __proto__:TeachingSupport
+}
+
+Teacher.__proto__ = User
+
+......................................
+
+// modern syntax
+
+Object.setPrototypeOf(TeachingSupport, Teacher)
+
+..........................
+
+let anotherUsername = "teaorcoffee     ";
+
+String.prototype.trueLength = function () {
+  console.log(`${this}`);
+  console.log(`${this.name}`);
+  console.log(`${this.trim().length}`);
+};
+
+anotherUsername.trueLength();
+"krishna".trueLength();
+"ganesh".trueLength();
+
+................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
