@@ -1,7 +1,16 @@
 https://tailwindcss.com/
 
 ...........................
-in settings: 
+
+in vs code:
+
+go to file tab
+
+go to preferences
+
+go to settings
+
+search for:
 
 @ext:ritwickdey.LiveServer full reload
 
