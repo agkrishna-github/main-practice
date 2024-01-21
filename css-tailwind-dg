@@ -1,1 +1,64 @@
+https://tailwindcss.com/
+
+...........................
+in settings: 
+
+@ext:ritwickdey.LiveServer full reload
+
+checked
+
+........................
+
+npx tailwindcss init
+
+..................
+
+create a folder as build
+
+.................
+
+create a folder as src
+
+..............
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./build/*.html"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+..........................
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.......................
+
+in vs code:
+
+go to file tab
+
+go to preferences
+
+go to settings
+
+search for unknow
+
+css > lint : select ignore
+
+..................
+
+9.00
+
+
+
+
+
+
+
+
 
