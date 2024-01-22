@@ -81,7 +81,31 @@ Tailwind CSS IntelliSense
 tailwind labs
 .....................
 
+inline fold extension:
+alamri
 
+.........
+
+npm init -y
+
+..........
+
+"scripts":{
+"tailwind": "npx tailwindcss -i ./src/input.css -o ./build/css/style.css --watch",
+"prettier": "npx prettier --write **/*.html"
+}
+
+.....
+
+npm run prettier
+
+..........
+
+npm i -D prettier-plugin-tailwindcss
+
+..........
+
+.gitignore
 
 
 
