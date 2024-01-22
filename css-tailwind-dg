@@ -63,6 +63,27 @@ css > lint : select ignore
 
 9.00
 
+npx tailwindcss -i ./src/input.css -o ./build/css/style.css --watch
+
+...................
+
+    <link rel="stylesheet" href="css/style.css">
+
+....................
+
+    <div class="bg-emerald-500 w-52 h-52 rounded-full shadow-2xl"></div>
+
+.....................
+
+in vs code extensions:
+
+Tailwind CSS IntelliSense
+tailwind labs
+.....................
+
+
+
+
 
 
 
