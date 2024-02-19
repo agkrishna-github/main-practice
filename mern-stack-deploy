@@ -24,7 +24,18 @@ change baseURL in to render new website name:
 
 ....
 
-goto hit hub and deploy client side project.
+goto hit hub and push the code to git hub
+
+..
+
+
+deploy client side project.
+
+go to render
+
+select new and static pages for react project
+
+check the details of branch
 
 ...
 
@@ -41,6 +52,8 @@ add the backend to github
 ..........
 
 go to render.com
+
+select new and webservices for backend
 
 
 
