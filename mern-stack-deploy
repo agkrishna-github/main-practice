@@ -1,1 +1,46 @@
+in frontend:
+
+npm i @fvilers/disable-react-devtools
+
+....
+
+in index.js
+
+import {disableReactDevTools} from '@fvilers/disable-react-devtools'
+
+if (process.env.NODE_ENV === 'production') disableReactDevTools()
+
+..........
+
+if we have 
+
+in store.js
+
+devTools: false,
+
+.....................
+
+change baseURL in to render new website name:
+
+....
+
+goto hit hub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
