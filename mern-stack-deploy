@@ -24,7 +24,44 @@ change baseURL in to render new website name:
 
 ....
 
-goto hit hub
+goto hit hub and deploy client side project.
+
+...
+
+in backend 
+
+if we have allowed origins:
+
+add the new client side render link
+
+..................
+
+add the backend to github
+
+..........
+
+go to render.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
