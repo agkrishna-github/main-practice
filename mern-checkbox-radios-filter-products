@@ -1,0 +1,115 @@
+
+import { useEffect } from "react";
+import { Checkbox, Radio } from "antd";
+import axios from "axios";
+
+const [products, setProducts] = useState([]);
+const [categories, setCategories] = useState([]);
+const [checked, setChecked] = useState([]);
+const [radio, setRadio] = useState([]);
+
+const PricesState = [
+  {
+    _id: 0,
+    name: "10 to 100",
+    array: [10, 100],
+  },
+  {
+    _id: 1,
+    name: "100 to 1000",
+    array: [100, 1000],
+  },
+  {
+    _id: 0,
+    name: "1000 to 5000",
+    array: [1000, 5000],
+  },
+];
+
+useEffect(() => {
+  if (!checked.length || !radio.length) getAllProducts();
+}, [checked.length, radio.length]);
+
+useEffect(() => {
+  if (checked.length || radio.length) filterProducts();
+}, [checked, radio]);
+
+useEffect(() => {
+  // get response.data from api
+  setProducts(response.data);
+}, []);
+
+useEffect(() => {
+  // get response.data from api
+  setCategories(response.data);
+}, []);
+
+const handleFilter = (value, id) => {
+  let all = [...checked];
+  if (value) {
+    all.push(id);
+  } else {
+    all = all.filter((c) => c !== id);
+  }
+  setChecked(all);
+};
+
+const filterProducts = async () => {
+  try {
+    const response = axios.post("", { checked, radio });
+    setProducts(response?.data?.products);
+  } catch (error) {}
+};
+
+const Practice = () => {
+  return (
+    <div>
+      <div>
+        {categories.map((c) => (
+          <Checkbox
+            key={c._id}
+            onChange={(e) => handleFilter(e.target.checked, c._id)}
+          >
+            {c.name}
+          </Checkbox>
+        ))}
+      </div>
+      <div>
+        <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+          {PricesState.map((p) => (
+            <div key={p._id}>
+              <Radio value={p.array}>{p.name}</Radio>
+            </div>
+          ))}
+        </Radio.Group>
+      </div>
+
+      <div>{JSON.stringify(checked, null, 4)}</div>
+    </div>
+  );
+};
+
+// controller
+
+const productFilterController = async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    const products = await productModel.find(args);
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error while filtering Products",
+      error,
+    });
+  }
+};
+
+// product count
