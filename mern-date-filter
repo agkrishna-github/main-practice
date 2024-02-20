@@ -1,0 +1,85 @@
+// npm i antd moment
+
+// https://ant.design/components/date-picker
+
+// https://momentjs.com/
+
+// Ant Design of React -> add css link
+
+import moment from "moment";
+
+import { DatePicker, Space } from "antd";
+const { RangePicker } = DatePicker;
+
+const practice = () => {
+  const [fromDate, setFromDate] = useState();
+  const [toDate, setToDate] = useState();
+  const [duplicateRoom, setDuplicateRoom] = useState([]);
+
+  const filterByDate = (dates) => {
+    setFromDate(moment(dates[0]).format("DD-MM-YYYY"));
+    setToDate(moment(dates[1]).format("DD-MM-YYYY"));
+
+    var tempRooms = [];
+    var availability = false;
+    for (const room of duplicateRoom) {
+      if (room.currentBookings.length > 0) {
+        for (const booking of room.currentBookings) {
+          if (
+            !moment(moment(dates[0]).format("DD-MM-YYYY")).isBetween(
+              booking.fromdate,
+              booking.toDate
+            ) &&
+            !moment(moment(dates[1]).format("DD-MM-YYYY")).isBetween(
+              booking.fromdate,
+              booking.toDate
+            )
+          ) {
+            if (
+              moment(dates[0]).format("DD-MM-YYYY") !== booking.fromDate &&
+              moment(dates[0]).format("DD-MM-YYYY") !== booking.toDate &&
+              moment(dates[1]).format("DD-MM-YYYY") !== booking.fromDate &&
+              moment(dates[1]).format("DD-MM-YYYY") !== booking.fromDate
+            ) {
+              availability = true;
+            }
+          }
+        }
+      }
+      if (availability == true || room.currentBookings.length == 0) {
+        tempRooms.push(room);
+      }
+      setRooms(tempRooms);
+    }
+  };
+
+  return (
+    <div>
+      <Space direction="vertical" size={12}>
+        <RangePicker format="DD-MM-YYYY" onChange={filterByDate} />
+      </Space>
+    </div>
+  );
+};
+
+///////////////////////////////
+
+// IN BOOKING CHILD COMPONENT
+
+const childComponent = ({ fromDate, toDate }) => {
+  const fromDate = moment(fromDate, "DD-MM-YYYY");
+  const toDate = moment(toDate, "DD-MM-YYYY");
+
+  const totalDays = moment.duration(toDate.diff(fromDate)).asDays() + 1;
+  return (
+    <div>
+      <Link to={`/book/${room._id}/${fromDate}/${toDate}`}></Link>
+    </div>
+  );
+};
+
+/// in booking model
+
+// fromDate : moment(fromDate).format('MM-DD-YYYY')
+// toDate : moment(toDate).format('MM-DD-YYYY')
+// update room details with ROOM model
