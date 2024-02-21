@@ -1,1 +1,50 @@
+mongosh;
+show dbs;
+use newDatabase
+show collections
+db.employee.find()
+db.employee.find({FIRST_NAME : /li/})
+db.employee.find({FIRST_NAME : {$regex : "Sh"}})
+case sensitive
+db.employee.find({FIRST_NAME : {$regex : "ab" , $options: "i"}})
+db.employee.find({JOBID : {$regex : "^AC"}})
+db.employee.count()
+db.employee.find({JOBID : "30"})
+db.employee.find({},{"FIRST_NAME":1, "LAST_NAME":1, "SALARY":1})
+db.employee.find({},{"FIRST_NAME":1, "LAST_NAME":1, "SALARY":1, "_id":0})
+db.employee.find({},{"_id":0}).sort({customer:1})
+db.employee.find().sort({ type:1 , weight:-1, _id:1})
+db.employee.find().limit(10)
+db.employee.find({},{FIRST_NAME: value}).limit(10)
+db.employee.find().sort({FIRST_NAME:1}).limit(10)
+it
+db.employee.find({},{"_id":0, "FIRST_NAME":1, "LAST_NAME":1, "MANAGER_ID":1}).sort({MANAGER_ID:1})
+db.employee.find({},{"_id":0, "FIRST_NAME":1, "LAST_NAME":1, "MANAGER_ID":1, "Salary":1}).sort({MANAGER_ID:1, Salary:-1})
+db.employee.find({},{"_id":0, "FIRST_NAME":1, "LAST_NAME":1, "MANAGER_ID":1, "Salary":1}).sort({MANAGER_ID:1, Salary:-1}).limit(4)
+db.employee.createIndex({ SALARY : 1})
+db.employee.getIndexes()
+db.employee.dropIndex({ SALARY: 1})
+db.employee.createIndex({ SALARY : 1, JOBID : -1})
+db.employee.createIndex({ SALARY.SALARYID : 1})
+db.employee.aggregate([{$match: {DEPARTMENT_ID: '100'}}])
+db.orders.aggregate([{ $group: { _id:"$cust_id" }}])
+db.orders.aggregate([{ $group: { _id:"$cust_id", total: { $sum: "$amount"}}}])
+db.orders.aggregate([{ $match: {DEPARTMENT_ID: "60"}}, { $count: "Total employees in dep : 60"}])
+db.orders.aggregate([
+        { $match: { status: "A"}},
+        { $group: { _id:"$cust_id", total: { $sum: "$amount"}}}
+])
+
+
+
+
+
+
+
+
+
+
+
+
+
 
