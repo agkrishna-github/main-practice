@@ -35,8 +35,31 @@ db.orders.aggregate([
         { $group: { _id:"$cust_id", total: { $sum: "$amount"}}}
 ])
 
+db.orders.find({ PaymentMode: { $eq: "Card" } }); // equal to
+db.orders.find({ orderTotal: { $neq: 600 } }); // not equal to
+db.orders.find({ orderTotal: { $gt: 3000 } }); // gratter than
+db.orders.find({ orderTotal: { $gte: 2500 } }); // gratter than or equal
+db.orders.find({ orderTotal: { $lt: 500 } }); // less than
+db.orders.find({ orderTotal: { $lte: 2500 } }); // less than or equal
+db.orders.find({ $and: [{address.city: "Delhi"}, {paymentmode: "Cash"}]}); // 
+db.orders.find({ $or: [{city: "Delhi"}, {orderTotal: { $lte: 1000}}]}); // 
+db.orders.find({ $nor: [{city: "Delhi"}, {paymentmode: { "cash" }}]}); // 
+db.employees.find({ "empAge":{$exists: true, $gte:35}}); // 
+db.employees.find({ "empAge":{$type:"double"}}); // 
+db.order.find({ "OrderItems":{$all:["notebook", "paper"]}}); // 
+db.order.find({ "OrderItems":{$size: 4}}); // 
+$currentDate
+$inc
+$min
+$max
+$mul
+$rename
 
+db.orders.find({ Customer:/ra/}); // 
+db.orders.find({ PaymentMode:{$regex:"Ca"}}); // word starts with ca 
+db.orders.find({ OrderItems:{$regex:"$ok"}}); // word ends with ok
 
+1.54
 
 
 
