@@ -61,6 +61,23 @@ db.orders.find({ OrderItems:{$regex:"$ok"}}); // word ends with ok
 
 1.54
 
+var map = function () {
+  emit(this.subject, this.marks);
+};
+
+var reduce = function (Subject, Marks) {
+  return Array.sum(Marks);
+};
+
+db.marks.mapReduce(map, reduce, { out: "result" });
+db.customerDetails.findAndModify({
+  query: { _id: 1899, item_available: { $gt: 0 } },
+  update: {
+    $inc: { item_available: -1 },
+    $push: { item_bought_by: { customer: "Ajay", date: "01-01-2023" } },
+  },
+});
+
 
 
 
