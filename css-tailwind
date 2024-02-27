@@ -1,4 +1,4 @@
-npx create-react-app my-project
+  npx create-react-app my-project
 cd my-project
 
 ..................
@@ -35,6 +35,28 @@ module.exports = {
 npm run start
 
 ................
+
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+colors: {
+main:"#000",
+gray:"#c6c6c6",
+}
+    },
+  },
+  plugins: [],
+ corePlugins: {
+    preflight: false,
+  },
+}
+
+///////////////////////////////////////////
 
 background-color {
 
