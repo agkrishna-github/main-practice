@@ -1,0 +1,115 @@
+  const [files, setFiles] = useState([]);
+  const [title, setTitle] = useState("");
+
+
+const formSubmitHandler = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    for (let i = 0; i < files?.length; i++) {
+      formData.append("images", files[i]);
+    }
+    formData.append("data", title);
+    dispatch(addheaderDetails(formData));
+  };
+
+
+      
+      <form onSubmit={formSubmitHandler} className="flex flex-col p-5 gap-5">
+     <input
+          type="file"
+          onChange={(e) => setFiles(e.target.files)}
+          className="w-[25%] p-2"
+          multiple
+        />
+        <button type="submit" className="p-2 bg-blue-500 text-white w-[25%]">
+          Submit
+        </button>
+      </form>
+
+      .................................
+
+
+      export const addheaderDetails = createAsyncThunk(
+  "headerDetails/addheaderDetails",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:6060/api/headerDetails/",
+        data
+      );
+      // console.log(response);
+    } catch (error) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+........................
+
+app.use("/api/headerDetails", headerRouter);
+
+..........................
+
+const { addHeaderDetails } = require("../controllers/headerController");
+const { upload } = require("../controllers/uploadController");
+
+router.post("/", upload.array("images"), addHeaderDetails);
+
+..............................
+
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    return cb(null, path.join(__dirname, "../uploadImages"));
+  },
+  filename: function (req, file, cb) {
+    return cb(null, `${Date.now()}_${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+module.exports = { upload };
+
+................................
+
+const HeaderDetails = require("../models/headerDetailsModel");
+const expressasynchandler = require("express-async-handler");
+
+const addHeaderDetails = expressasynchandler(async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
+  const newHeaderDetails = await HeaderDetails.create({
+    title: req?.body?.data,
+    images: req?.files,
+  });
+  console.log(newHeaderDetails);
+});
+module.exports = { addHeaderDetails };
+
+.................................
+
+const mongoose = require("mongoose");
+
+const headerDetailsSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  images: [],
+});
+
+module.exports = mongoose.model("HeaderDetail", headerDetailsSchema);
+
+.....................................
+
+
+
+
+
+
+
+
+      
