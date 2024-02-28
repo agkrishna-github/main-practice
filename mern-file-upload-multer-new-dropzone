@@ -1,1 +1,385 @@
+import Dropzone from "react-dropzone";
+..................
+
+ <Dropzone
+              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <p>
+                      Drag 'n' drop some files here, or click to select files
+                    </p>
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+
+.......................
+
+import { delImg, uploadImg } from "../features/upload/uploadSlice";
+
+.......................
+
+
+export const uploadImg = createAsyncThunk(
+  "upload/images",
+  async (data, thunkAPI) => {
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < data.length; i++) {
+        formData.append("images", data[i]);
+      }
+
+const response = await axios.post(`${base_url}upload/`, data, config);
+  return response.data;
+
+
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+.............................
+
+app.use("/api/upload", uploadRouter);
+
+.........................
+
+const express = require("express");
+const { uploadImages, deleteImages } = require("../controller/uploadCtrl");
+const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
+const { uploadPhoto, productImgResize } = require("../middlewares/uploadImage");
+const router = express.Router();
+
+router.post(
+  "/",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  productImgResize,
+  uploadImages
+);
+
+router.delete("/delete-img/:id", authMiddleware, isAdmin, deleteImages);
+
+module.exports = router;
+
+
+..................................
+
+uploadCtrl.js
+.......................
+
+const fs = require("fs");
+const asyncHandler = require("express-async-handler");
+
+const {
+  cloudinaryUploadImg,
+  cloudinaryDeleteImg,
+} = require("../utils/cloudinary");
+const uploadImages = asyncHandler(async (req, res) => {
+  try {
+    const uploader = (path) => cloudinaryUploadImg(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newpath = await uploader(path);
+      console.log(newpath);
+      urls.push(newpath);
+      fs.unlinkSync(path);
+    }
+    const images = urls.map((file) => {
+      return file;
+    });
+    res.json(images);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+const deleteImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = cloudinaryDeleteImg(id, "images");
+    res.json({ message: "Deleted" });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+module.exports = {
+  uploadImages,
+  deleteImages,
+};
+
+
+.....................................................
+
+uploadImage.js
+...
+
+const multer = require("multer");
+const sharp = require("sharp");
+const path = require("path");
+const fs = require("fs");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../public/images/"));
+  },
+  filename: function (req, file, cb) {
+    const uniquesuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniquesuffix + ".jpeg");
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb({ message: "Unsupported file format" }, false);
+  }
+};
+
+const uploadPhoto = multer({
+  storage: storage,
+  fileFilter: multerFilter,
+  limits: { fileSize: 1000000 },
+});
+
+const productImgResize = async (req, res, next) => {
+  if (!req.files) return next();
+  await Promise.all(
+    req.files.map(async (file) => {
+      await sharp(file.path)
+        .resize(300, 300)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/images/products/${file.filename}`);
+      fs.unlinkSync(`public/images/products/${file.filename}`);
+    })
+  );
+  next();
+};
+
+const blogImgResize = async (req, res, next) => {
+  if (!req.files) return next();
+  await Promise.all(
+    req.files.map(async (file) => {
+      await sharp(file.path)
+        .resize(300, 300)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/images/blogs/${file.filename}`);
+      fs.unlinkSync(`public/images/blogs/${file.filename}`);
+    })
+  );
+  next();
+};
+module.exports = { uploadPhoto, productImgResize, blogImgResize };
+
+
+..................................................
+
+export const uploadSlice = createSlice({
+  name: "imaegs",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(uploadImg.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadImg.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.images = action.payload;
+      })
+      .addCase(uploadImg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+
+export default uploadSlice.reducer;
+........................
+
+
+import { delImg, uploadImg } from "../features/upload/uploadSlice";
+import {createBlogs,getABlog,resetState,updateABlog} from "../features/blogs/blogSlice";
+
+
+const imgState = useSelector((state) => state.upload.images);
+
+
+  const img = [];
+  imgState.forEach((i) => {
+    img.push({
+      public_id: i.public_id,
+      url: i.url,
+    });
+  });
+
+/*
+initialValues: {
+      title: blogName || "",
+      images: "",
+    },
+*/
+
+
+const [files, setFiles] = useState([]);
+  const [title, setTitle] = useState("");
+
+useEffect(()=>{
+setFiles(img)
+},[imgState])
+
+
+const formSubmitHandler = (e) => {
+    e.preventDefault();
+
+    dispatch(addheaderDetails({title, files}));
+  };
+     
+      <form onSubmit={formSubmitHandler} className="flex flex-col p-5 gap-5">
+     <input
+          type="text"
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-[25%] p-2"
+        />
+          <Dropzone
+              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <p>
+                      Drag 'n' drop some files here, or click to select files
+                    </p>
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+        <button type="submit" className="p-2 bg-blue-500 text-white w-[25%]">
+          Submit
+        </button>
+      </form>
+
+      .................................
+
+export const createBlogs = createAsyncThunk(
+  "blog/create-blogs",
+  async (blogData, thunkAPI) => {
+    try {
+      return await blogService.createBlog(blogData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+................................
+
+app.use("/api/blog", blogRouter);
+
+.....................................
+
+const blogRouter = require("./routes/blogRoute");
+
+................................
+
+const express = require("express");
+const {
+  createBlog,
+
+} = require("../controller/blogCtrl");
+
+const router = express.Router();
+
+.............................
+
+router.post("/", authMiddleware, isAdmin, createBlog);
+
+..........................
+
+const Blog = require("../models/blogModel");
+
+const cloudinaryUploadImg = require("../utils/cloudinary");
+
+const createBlog = asyncHandler(async (req, res) => {
+  try {
+    const newBlog = await Blog.create(req.body);
+    res.json(newBlog);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
+
+.......................................
+
+const cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.SECRET_KEY,
+});
+
+const cloudinaryUploadImg = async (fileToUploads) => {
+  return new Promise((resolve) => {
+    cloudinary.uploader.upload(fileToUploads, (result) => {
+      resolve(
+        {
+          url: result.secure_url,
+          asset_id: result.asset_id,
+          public_id: result.public_id,
+        },
+        {
+          resource_type: "auto",
+        }
+      );
+    });
+  });
+};
+const cloudinaryDeleteImg = async (fileToDelete) => {
+  return new Promise((resolve) => {
+    cloudinary.uploader.destroy(fileToDelete, (result) => {
+      resolve(
+        {
+          url: result.secure_url,
+          asset_id: result.asset_id,
+          public_id: result.public_id,
+        },
+        {
+          resource_type: "auto",
+        }
+      );
+    });
+  });
+};
+
+module.exports = { cloudinaryUploadImg, cloudinaryDeleteImg };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
