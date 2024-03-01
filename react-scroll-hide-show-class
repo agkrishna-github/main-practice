@@ -1,0 +1,17 @@
+  const [value, setValue] = useState(false);
+
+
+  const changeValueOnScroll = () => {
+    const scrollValue = document.documentElement.scrollTop;
+    if (scrollValue > 100) {
+      setValue(true);
+    } else {
+      setValue(false);
+    }
+  };
+
+  window.addEventListener("scroll", changeValueOnScroll);
+
+<div className={value ? "flex flex-col" : "hidden" }>
+Hide the class 
+</div>
