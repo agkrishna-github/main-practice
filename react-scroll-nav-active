@@ -1,0 +1,23 @@
+import { Link } from "react-scroll";
+
+<Link
+                  activeClass="active"
+                  to="home"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                  offset={100}
+                  className="hover:bg-blue-900  p-3 flex justify-center items-center rounded-full hover:transition hover:duration-500 hover:ease-out"
+                >
+                  <Tooltip title="Home" placement="left">
+                    <IoHomeOutline className="text-white" />
+                  </Tooltip>
+                </Link>
+
+<section
+              className="w-full h-full p-2 flex flex-col gap-5 md:gap-2 justify-center"
+              id="home"
+            >
+              <h4 className="p-5 text-3xl text-[#FEE715FF]">👋 Hello, I am</h4>
+</section>
+
