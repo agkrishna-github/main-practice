@@ -122,6 +122,76 @@ const formik = useFormik({
 
 ..........
 
+ 
+        <input
+          type="email"
+          id="email"
+          name="email"
+          {...formik.getfieldProps('email')}
+        />
+
+.........
+
+import { Formik } from 'formik'
+
+...
+
+ <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+     >
+
+</Formik>
+
+....
+
+import { Formik, form } from 'formik'
+
+ <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+     >
+ <Form>
+
+
+ </Form>
+
+</Formik>
+
+..........
+
+import { Formik, form, Field } from 'formik'
+
+<Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+     >
+ <Form>
+     <Field
+          type="email"
+          id="email"
+          name="email"
+         
+        />
+
+ </Form>
+
+</Formik>
+
+.........................
+
+import { Formik, form, Field, ErrorMessage } from 'formik'
+
+ <ErrorMessage name="email" />
+
+...
+
+
+
+
 
 
 
