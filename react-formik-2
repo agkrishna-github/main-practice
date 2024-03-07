@@ -1,1 +1,87 @@
 
+import { Formik, form, Field } from 'formik'
+import TextError from './TextError'
+
+<Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+     >
+ <Form>
+     <Field
+          type="email"
+          id="email"
+          name="email"
+         
+        />
+
+ </Form>
+
+</Formik>
+
+...................
+
+const initialValues = {
+  name: 'Vishwas',
+  email: '',
+  channel: '',
+  comments: '',
+ }
+
+....
+
+ <div className='form-control'>
+              <label htmlFor='comments'>Comments</label>
+              <Field
+                as='textarea'
+                id='comments'
+                name='comments'
+              />
+              <ErrorMessage name='comments' component={TextError} />
+            </div>
+
+...........................
+
+
+const initialValues = {
+  name: 'Vishwas',
+  email: '',
+  channel: '',
+  comments: '',
+  address:'',
+ }
+
+....
+
+ <div className='form-control'>
+              <label htmlFor='address'>Address</label>
+              <Field name='address'>
+                {
+                  (props)=> {
+
+                  const {field, form, meta} = props
+                      return 
+                <div>
+                  <input type="text" id='address' {...field} />
+                    {meta.touched && meta.error ? <div> {meta.error}</div>}</div> : null }
+                </div>
+         }
+    }
+              </Field>
+</div>
+
+.....................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
