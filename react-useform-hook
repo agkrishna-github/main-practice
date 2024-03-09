@@ -1,0 +1,14 @@
+npm install react-hook-form
+
+...
+
+import { useForm } from "react-hook-form";
+
+export const YoutubeForm = () => {
+
+  const form = useForm();
+  const { register } = form;
+
+  
+  
+}
