@@ -202,6 +202,221 @@ const { isLoading, data, isFetching, refetch } = useQuery('super-heroes', fetchS
 
 .....................
 
+const onSuccess = data => {
+    console.log({ data })
+  }
+
+
+  const onError = error => {
+    console.log({ error })
+  }
+
+const { isLoading, data, isFetching, refetch } = useQuery('super-heroes', fetchSuperHeroes, { onSuccess: onSuccess, onError: onError })
+
+....................
+
+const { isLoading, data, isFetching, refetch } = useQuery('super-heroes', fetchSuperHeroes, { onSuccess: onSuccess, onError: onError, select: (data) => {
+  const superHeroNames = data.data.map((hero) => hero.name)
+  return superHeroNames
+} })
+
+
+return (
+  <div>
+     {data.map(heroName => {
+        return <div key={heroName}>{heroName}</div>
+      })} 
+  </div>
+
+)
+
+.......................
+
+src/hooks/useSuperHeroedData.js
+
+import { useQuery } from 'react-query'
+import axios from 'axios'
+
+const fetchSuperHeroes = () => {
+  return axios.get('http://localhost:4000/superheroes')
+}
+
+
+export const useSuperHeroesData = (onSuccess, onError) => {
+  return useQuery('super-heroes', fetchSuperHeroes, {
+    onSuccess,
+    onError
+     select: data => {
+       const superHeroNames = data.data.map(hero => hero.name)
+       return superHeroNames
+     }
+  })
+}
+
+.....
+
+src/components/RqSuperheroespage.js
+
+import { useSuperHeroesData } from '../hooks/useSuperHeroesData'
+
+ const { isLoading, data, isError, error, refetch } = useSuperHeroesData(
+    onSuccess,
+    onError
+  )
+
+.....
+
+src/components/RqSuperheroepage.js
+
+import { useParams } from 'react-router-dom'
+import { useSuperHeroData } from '../hooks/useSuperHeroData'
+
+export const RQSuperHeroPage = () => {
+  const { heroId } = useParams()
+  const { isLoading, data, isError, error } = useSuperHeroData(heroId)
+
+  if (isLoading) {
+    return <h2>Loading...</h2>
+  }
+
+  if (isError) {
+    return <h2>{error.message}</h2>
+  }
+  return (
+    <div>
+      {data.data.name} - {data.data.alterEgo}
+    </div>
+  )
+}
+
+...........................
+
+
+src/hooks/useSuperHeroedData.js
+
+import { useQuery } from 'react-query'
+import axios from 'axios'
+
+const fetchSuperHeroes = () => {
+  return axios.get('http://localhost:4000/superheroes')
+}
+
+
+export const useSuperHeroesData = (onSuccess, onError) => {
+  return useQuery('super-heroes', fetchSuperHeroes, {
+    onSuccess,
+    onError
+     select: data => {
+       const superHeroNames = data.data.map(hero => hero.name)
+       return superHeroNames
+     }
+  })
+}
+
+............
+
+import { Link } from 'react-router-dom'
+
+return (
+
+ <div>
+   {data?.data.map(hero => {
+        return (
+          <div key={hero.id}>
+            <Link to={`/rq-super-heroes/${hero.id}`}>
+              {hero.name}
+            </Link>
+          </div>
+        )
+      })}
+)
+</div>
+
+....................
+
+src/hooks/useSuperHeroData.js
+
+import { useQuery } from 'react-query'
+import axios from 'axios'
+
+const fetchSuperHero = (heroId) => {
+  return axios.get(`http://localhost:4000/superheroes/${heroId}`)
+}
+
+export const useSuperHeroData = (heroId) => {
+
+  return useQuery(['super-hero', heroId], ()=> fetchSuperHero(heroId))
+}
+
+......................
+
+src/components/RQSuperHeroPage.js
+
+import { useParams } from 'react-router-dom'
+import { useSuperHeroData } from '../hooks/useSuperHeroData'
+
+export const RQSuperHeroPage = () => {
+  const { heroId } = useParams()
+  const { isLoading, data, isError, error } = useSuperHeroData(heroId)
+
+  if (isLoading) {
+    return <h2>Loading...</h2>
+  }
+
+  if (isError) {
+    return <h2>{error.message}</h2>
+  }
+  return (
+    <div>
+      {data.data.name} - {data.data.alterEgo}
+    </div>
+  )
+}
+
+..............
+
+
+const fetchSuperHero = ({ queryKey }) => {
+  const heroId = queryKey[1]
+  return axios.get(`http://localhost:4000/superheroes/${heroId}`)
+}
+
+export const useSuperHeroData = (heroId) => {
+
+  return useQuery(['super-hero', heroId], fetchSuperHero)
+}
+
+
+.......................
+
+src/components/ParallelQueriesPage.js
+
+import { useQuery } from 'react-query'
+import axios from 'axios'
+
+const fetchSuperHeroes = () => {
+  return axios.get('http://localhost:4000/superheroes')
+}
+
+const fetchFriends = () => {
+  return axios.get('http://localhost:4000/friends')
+}
+
+export const ParallelQueriesPage = () => {
+  const { data: superHeroes } = useQuery('super-heroes', fetchSuperHeroes)
+  const { data: friends } = useQuery('friends', fetchFriends)
+  console.log(superHeroes, friends)
+  return <div>Parallel Queries</div>
+}
+
+........................
+
+
+
+
+
+
+
 
 
 
