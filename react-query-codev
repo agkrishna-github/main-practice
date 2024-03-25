@@ -1,0 +1,15 @@
+npm i json-server
+
+...
+
+ "scripts": {
+   
+    "serve-json": "json-server --watch db.json --port 4000"
+  },
+
+...
+
+npm serve-json
+
+...
+
