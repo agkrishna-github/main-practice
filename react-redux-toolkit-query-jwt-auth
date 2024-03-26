@@ -1,0 +1,424 @@
+authSlice.js
+
+  import { createSlice } from "@reduxjs/toolkit"
+
+const authSlice = createSlice({
+    name: 'auth',
+    initialState: { user: null, token: null },
+    reducers: {
+        setCredentials: (state, action) => {
+            const { user, accessToken } = action.payload
+            state.user = user
+            state.token = accessToken
+        },
+        logOut: (state, action) => {
+            state.user = null
+            state.token = null
+        }
+    },
+})
+
+export const { setCredentials, logOut } = authSlice.actions
+
+export default authSlice.reducer
+
+export const selectCurrentUser = (state) => state.auth.user
+export const selectCurrentToken = (state) => state.auth.token
+
+..........................
+
+apiSlice.js
+
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { setCredentials, logOut } from '../../features/auth/authSlice'
+
+const baseQuery = fetchBaseQuery({
+    baseUrl: 'http://localhost:3500',
+    credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+        const token = getState().auth.token
+        if (token) {
+            headers.set("authorization", `Bearer ${token}`)
+        }
+        return headers
+    }
+})
+
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+    let result = await baseQuery(args, api, extraOptions)
+
+    if (result?.error?.originalStatus === 403) {
+        console.log('sending refresh token')
+        // send refresh token to get new access token 
+        const refreshResult = await baseQuery('/refresh', api, extraOptions)
+        console.log(refreshResult)
+        if (refreshResult?.data) {
+            const user = api.getState().auth.user
+            // store the new token 
+            api.dispatch(setCredentials({ ...refreshResult.data, user }))
+            // retry the original query with new access token 
+            result = await baseQuery(args, api, extraOptions)
+        } else {
+            api.dispatch(logOut())
+        }
+    }
+
+    return result
+}
+
+export const apiSlice = createApi({
+    baseQuery: baseQueryWithReauth,
+    endpoints: builder => ({})
+})
+
+.............................
+
+authApiSlice.js
+
+import { apiSlice } from "../../app/api/apiSlice";
+
+export const authApiSlice = apiSlice.injectEndpoints({
+    endpoints: builder => ({
+        login: builder.mutation({
+            query: credentials => ({
+                url: '/auth',
+                method: 'POST',
+                body: { ...credentials }
+            })
+        }),
+    })
+})
+
+export const {
+    useLoginMutation
+} = authApiSlice
+
+............................
+
+src/app/store.js
+
+import { configureStore } from "@reduxjs/toolkit"
+import { apiSlice } from "./api/apiSlice"
+import authReducer from '../features/auth/authSlice'
+
+export const store = configureStore({
+    reducer: {
+        [apiSlice.reducerPath]: apiSlice.reducer,
+        auth: authReducer
+    },
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().concat(apiSlice.middleware),
+    devTools: true
+})
+
+...........................
+
+index.js
+
+
+import { store } from './app/store'
+import { Provider } from 'react-redux'
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>
+);
+
+..........................
+
+Login.js
+
+import { useRef, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { useDispatch } from 'react-redux'
+import { setCredentials } from './authSlice'
+import { useLoginMutation } from './authApiSlice'
+
+const Login = () => {
+    const userRef = useRef()
+    const errRef = useRef()
+    const [user, setUser] = useState('')
+    const [pwd, setPwd] = useState('')
+    const [errMsg, setErrMsg] = useState('')
+    const navigate = useNavigate()
+
+    const [login, { isLoading }] = useLoginMutation()
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        userRef.current.focus()
+    }, [])
+
+    useEffect(() => {
+        setErrMsg('')
+    }, [user, pwd])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        try {
+            const userData = await login({ user, pwd }).unwrap()
+            dispatch(setCredentials({ ...userData, user }))
+            setUser('')
+            setPwd('')
+            navigate('/welcome')
+        } catch (err) {
+            if (!err?.originalStatus) {
+                // isLoading: true until timeout occurs
+                setErrMsg('No Server Response');
+            } else if (err.originalStatus === 400) {
+                setErrMsg('Missing Username or Password');
+            } else if (err.originalStatus === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg('Login Failed');
+            }
+            errRef.current.focus();
+        }
+    }
+
+    const handleUserInput = (e) => setUser(e.target.value)
+
+    const handlePwdInput = (e) => setPwd(e.target.value)
+
+    const content = isLoading ? <h1>Loading...</h1> : (
+        <section className="login">
+            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+
+            <h1>Employee Login</h1>
+
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    value={user}
+                    onChange={handleUserInput}
+                    autoComplete="off"
+                    required
+                />
+
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    onChange={handlePwdInput}
+                    value={pwd}
+                    required
+                />
+                <button>Sign In</button>
+            </form>
+        </section>
+    )
+
+    return content
+}
+export default Login
+
+.................................
+
+RequireAuth.js
+
+import { useLocation, Navigate, Outlet } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { selectCurrentToken } from "./authSlice"
+
+const RequireAuth = () => {
+    const token = useSelector(selectCurrentToken)
+    const location = useLocation()
+
+    return (
+        token
+            ? <Outlet />
+            : <Navigate to="/login" state={{ from: location }} replace />
+    )
+}
+export default RequireAuth
+
+...........................
+
+Welcome.js
+
+import { useSelector } from "react-redux"
+import { selectCurrentUser, selectCurrentToken } from "./authSlice"
+import { Link } from "react-router-dom"
+
+const Welcome = () => {
+    const user = useSelector(selectCurrentUser)
+    const token = useSelector(selectCurrentToken)
+
+    const welcome = user ? `Welcome ${user}!` : 'Welcome!'
+    const tokenAbbr = `${token.slice(0, 9)}...`
+
+    const content = (
+        <section className="welcome">
+            <h1>{welcome}</h1>
+            <p>Token: {tokenAbbr}</p>
+            <p><Link to="/userslist">Go to the Users List</Link></p>
+        </section>
+    )
+
+    return content
+}
+export default Welcome
+
+...............................
+
+Layout.js
+
+import { Outlet } from "react-router-dom"
+
+const Layout = () => {
+    return <Outlet />
+}
+
+export default Layout
+
+.....................
+
+Public.js
+
+import { Link } from "react-router-dom"
+
+const Public = () => {
+
+    const content = (
+        <section className="public">
+            <header>
+                <h1>Welcome to Repair Store!</h1>
+            </header>
+            <main>
+                <p>Located in Beautiful Downtown Foo City, Repair Store provides a trained staff ready to meet your repair needs.</p>
+                <p>&nbsp;</p>
+                <address>
+                    Repair Store<br />
+                    555 Foo Drive<br />
+                    Foo City, CA 12345<br />
+                    <a href="tel:+15555555555">(555) 555-5555</a>
+                </address>
+            </main>
+            <footer>
+                <Link to="/login">Employee Login</Link>
+            </footer>
+        </section>
+
+    )
+    return content
+}
+export default Public
+
+.......................................
+
+App.js
+
+import { Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
+import Public from './components/Public'
+import Login from './features/auth/Login'
+import Welcome from './features/auth/Welcome'
+import RequireAuth from './features/auth/RequireAuth'
+import UsersList from './features/users/UsersList'
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* public routes */}
+        <Route index element={<Public />} />
+        <Route path="login" element={<Login />} />
+
+        {/* protected routes */}
+        <Route element={<RequireAuth />}>
+          <Route path="welcome" element={<Welcome />} />
+          <Route path="userslist" element={<UsersList />} />
+        </Route>
+
+      </Route>
+    </Routes>
+  )
+}
+
+export default App;
+
+...............................
+
+usersApiSlice.js
+
+import { apiSlice } from "../../app/api/apiSlice"
+
+export const usersApiSlice = apiSlice.injectEndpoints({
+    endpoints: builder => ({
+        getUsers: builder.query({
+            query: () => '/users',
+            keepUnusedDataFor: 5,
+        })
+    })
+})
+
+export const {
+    useGetUsersQuery
+} = usersApiSlice 
+
+.............................
+
+UsersList.js
+
+import { useGetUsersQuery } from "./usersApiSlice"
+import { Link } from "react-router-dom";
+
+const UsersList = () => {
+    const {
+        data: users,
+        isLoading,
+        isSuccess,
+        isError,
+        error
+    } = useGetUsersQuery()
+
+    let content;
+    if (isLoading) {
+        content = <p>"Loading..."</p>;
+    } else if (isSuccess) {
+        content = (
+            <section className="users">
+                <h1>Users List</h1>
+                <ul>
+                    {users.map((user, i) => {
+                        return <li key={i}>{user.username}</li>
+                    })}
+                </ul>
+                <Link to="/welcome">Back to Welcome</Link>
+            </section>
+        )
+    } else if (isError) {
+        content = <p>{JSON.stringify(error)}</p>;
+    }
+
+    return content
+}
+export default UsersList
+
+...............................
+
+
+
+
+
+
+
+
+
+
+
