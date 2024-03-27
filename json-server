@@ -18,3 +18,9 @@ export default axios.create({
 
 .................
 
+Method:2 
+
+npx json-server -w data/db.json -p 3500
+
+............
+
