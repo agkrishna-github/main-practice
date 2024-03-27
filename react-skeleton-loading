@@ -1,1 +1,113 @@
+skelton/Skeleton.css
+
+.skeleton {
+    background-color: rgb(199, 199, 199);
+    margin: 0.75rem 0;
+    border-radius: 0.25rem;
+}
+
+.skeleton.title { 
+    height: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton.text {
+    height: 0.75rem;
+}
+
+.skeleton.width-100 {
+    width: 100%;
+}
+
+.skeleton.width-50 {
+    width: 50%;
+}
+
+.skeleton.profile-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+/* animation */
+@keyframes pulse {
+    50% {
+        opacity: .5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+...................
+
+index.css
+
+.post {
+    background-color: var(--POST-BGCOLOR);
+    padding: 1rem;
+    margin: 1rem;
+    border: 1px solid var(--MAIN-BORDER);
+    border-radius: 1rem;
+    box-shadow: 2px 2px 5px 2px var(--BOX-SHADOW);
+}
+
+..................................
+
+Skeleton.jsx
+
+import './Skeleton.css'
+
+const Skeleton = ({ classes }) => {
+    const classNames = `skeleton ${classes} animate-pulse`
+
+    return <div className={classNames}></div>
+}
+export default Skeleton
+
+.......................
+
+skeletonPost.jsx
+
+import Skeleton from "./Skeleton"
+
+const SkeletonPost = () => {
+    return (
+        <div className="post">
+            <Skeleton classes="title width-50" />
+            <Skeleton classes="text width-100" />
+            <Skeleton classes="text width-100" />
+            <Skeleton classes="text width-100" />
+        </div>
+    )
+}
+export default SkeletonPost
+
+...........................
+
+PostList.jsx
+
+import SkeletonPost from './skeletons/SkeletonPost'
+
+let content = (
+    [...Array(10).keys()].map(i => {
+                return <SkeletonPost key={i} />
+            })
+) 
+
+return content
+
+export default PostsList
+
+.........................
+
+
+
+
+
+
+
+
+
 
