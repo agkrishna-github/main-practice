@@ -147,7 +147,11 @@ we can not use view component to display text:
 
 import { View, Text } from "react-native";
 
-<Text> Hello World </Text>
+ <View style={{ flex: 1, backgroundColor: "plum", padding: 60 }}>
+      <Text>
+        <Text style={{ color: "white" }}> Hello nre </Text>World
+      </Text>
+    </View>
 
 ......
 
