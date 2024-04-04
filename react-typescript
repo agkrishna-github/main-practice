@@ -1,0 +1,349 @@
+npx create-react-app react-typescript-demo --template typescript
+
+...
+
+npm start
+
+...
+
+App.tsx
+
+import { Greet } from './components/props/Greet'
+
+function App() {
+    return (
+      <div>
+          <Greet name='Vishwas'  />
+      </div>
+    )
+}
+
+export default App;
+
+..........
+
+Greet.tsx
+
+type GreetProps = {
+  name: string
+ }
+
+export const Greet = (props: GreetProps) => {
+  
+  return (
+    <div>
+     
+          Hey {props.name}! You have 10 unread messages
+     
+    </div>
+  )
+}
+
+...........
+
+App.tsx
+
+<Greet name='krishna' messageCount={20} isLoggedIn={false} />
+
+...
+
+Greet.tsx
+
+type GreetProps = {
+  name: string
+  messageCount: number
+  isLoggedIn: boolean
+}
+
+export const Greet = (props: GreetProps) => {
+ 
+  return (
+    <div>
+      {props.isLoggedIn ? (
+        <h2>
+          Hey {props.name}! You have {props.messageCount} unread messages
+        </h2>
+      ) : (
+        <h2>Welcome Guest</h2>
+      )}
+    </div>
+  )
+}
+
+.......
+
+App.tsx
+
+import { Person } from './components/props/Person'
+
+
+function App(){
+  
+ const personName = {
+    first: 'Bruce',
+    last: 'Wayne'
+  }
+
+   return (
+    <div className='App'>
+       <Person name={personName} />
+     </div>
+     )
+}
+
+export default App;
+
+...
+
+Person.tsx
+
+type PersonProps = {
+  name: {
+    first: string
+    last: string
+  } 
+}
+
+export const Person = (props: PersonProps) => {
+  return (
+    <h2>
+      {props.name.first} {props.name.last}
+    </h2>
+  )
+}
+
+.............
+
+App.js
+
+import { PersonList } from './components/props/PersonList'
+
+function App() {
+  
+  const nameList = [
+    {
+      first: 'Bruce',
+      last: 'Wayne'
+    },
+    {
+      first: 'Clark',
+      last: 'Kent'
+    },
+    {
+      first: 'Princess',
+      last: 'Diana'
+    }
+  ]
+
+  return (
+    <PersonList names={nameList} />
+  )
+}
+
+......................
+
+PersonList.tsx
+
+type PersonsListProps = {
+  names: {
+   first: string,
+    last: string
+}[]
+}
+
+export const PersonList = (props: PersonsListProps) => {
+  return(
+    <div>
+        {props.names.map((name) => (
+          <h2>{name.first} {name.last}</h2>
+        ))}
+    </div>
+  )
+}
+
+.................
+
+App.tsx
+
+import { Status } from './components/props/PersonList'
+
+function App() {
+    return (
+      <div>
+        <Status  status='loading' />
+      </div>
+  )
+}
+
+................
+
+Status.tsx
+
+type StatusProps = {
+  status: string
+}
+
+export const Status = (props: StatusProps) => {
+  let message
+  if (props.status === 'loading') {
+    message = 'Loading...'
+  } else if (props.status === 'success') {
+    message = 'Data fetched successfully!'
+  } else if (props.status === 'error') {
+    message = 'Error fetching data'
+  }
+  return <h2>Status - {message}</h2>
+}
+
+..............
+
+Status.tsx
+
+type StatusProps = {
+  status: 'loading' | 'success' | 'error'
+}
+
+...............
+
+App.tsx
+
+import { Heading } from './components/props/Heading'
+
+function App(){
+  return(
+    <div>
+      <Heading>Placeholder text</Heading>
+    </div>
+  )
+}
+
+..........
+
+Heading.tsx
+
+type HeadingProps = {
+  children: string
+}
+
+
+export const Heading = (props: HeadingProps) => {
+  return <h2>{props.children}</h2>
+}
+
+............................
+
+
+App.tsx
+
+import { Oscar } from './components/props/Heading'
+
+function App(){
+  return(
+    <div>
+     <Oscar>
+        <Heading>Oscar goes to Dicaprio</Heading>
+      </Oscar>
+    </div>
+  )
+}
+
+...............
+
+Oscar.tsx
+
+type OscarProps = {
+  children: React.ReactNode
+}
+
+export const Oscar = (props: OscarProps) => {
+  return <div>{props.children}</div>
+}
+
+......................
+
+App.tsx
+
+<Greet name='krishna'  isLoggedIn={false} />
+
+...
+
+Greet.tsx
+
+type GreetProps = {
+  name: string
+  messageCount?: number
+  isLoggedIn: boolean
+}
+
+export const Greet = (props: GreetProps) => {
+ 
+  return (
+    <div>
+      {props.isLoggedIn ? (
+        <h2>
+          Hey {props.name}! You have {props.messageCount} unread messages
+        </h2>
+      ) : (
+        <h2>Welcome Guest</h2>
+      )}
+    </div>
+  )
+}
+
+.......
+
+
+export const Greet = (props: GreetProps) => {
+   const { messageCount = 0 } = props
+  return (
+    <div>
+      {props.isLoggedIn ? (
+        <h2>
+          Hey {props.name}! You have {messageCount} unread messages
+        </h2>
+      ) : (
+        <h2>Welcome Guest</h2>
+      )}
+    </div>
+  )
+}
+
+....................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
