@@ -309,3 +309,141 @@ export const Greet = (props: GreetProps) => {
 }
 
 ....................
+
+App.tsx
+
+import { Button } from './components/props/Button'
+
+function App(){
+  return(
+    <div>
+     <Button
+        handleClick={() => {
+          console.log('Button clicked')
+        }}
+      />     
+     
+    </div>
+  )
+}
+
+...................................
+
+Button.tsx
+
+type ButtonProps = {
+  handleClick: () => void
+}
+
+export const Button = (props: ButtonProps) => {
+  return <button onClick={ props.handleClick }>Click</button>
+}
+
+..............................
+
+
+App.tsx
+
+import { Button } from './components/props/Button'
+
+function App(){
+  return(
+    <div>
+     <Button
+        handleClick={(event, id) => {
+          console.log('Button clicked', event, id)
+        }}
+      />
+     
+    </div>
+  )
+}
+
+.........................
+
+Button.tsx
+
+
+type ButtonProps = {
+  handleClick: (event: React.MouseEvent<HTMLButtonElement>, id: number) => void
+}
+
+export const Button = (props: ButtonProps) => {
+  return <button onClick={event => props.handleClick(event, 1)}>Click</button>
+}
+
+......................
+
+App.tsx
+
+import { Input } from './components/props/Input'
+
+function App(){
+  return(
+    <div>
+     <Input value='' handleChange={(event) => console.log(event)}   />
+     
+    </div>
+  )
+}
+
+..........
+
+Input.tsx
+
+type InputProps = {
+    value: string
+    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+export const Input = (props: InputProps) => {
+  return <input type="text" value={props.value} onChange={props.hancleChange} />
+}
+
+.......................
+
+App.tsx
+
+import { Container } from './components/props/Container'
+
+function App() {
+    return(
+        <Container styles={{ border: '1px solid black', padding: '1rem' }} />
+    )
+}
+
+......................
+
+Container.tsx
+
+type ContainerProps= {
+  styles: React.CSSProperties
+}
+
+export const Container = (props: ContainerProps) => {
+  return (
+    <div style={props.styles}>
+      Text content goes here
+    </div>
+  )
+}
+
+.........................
+
+8 video completed:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
