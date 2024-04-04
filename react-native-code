@@ -99,9 +99,65 @@ press a for android in vscode terminal
 
 ....
 
+Theory>
 
+core components
 
+REACT NATIVE UI COMPONENT  - ANDROID VIEW  -  IOS VIEW       -      WEB ANALOG
 
+<View>                    -  <ViewGroup>  -  <UiView>        -      A non-scrolling <div>
+<Text>                    -  <TextView>   -  <UiTextView>    -      <p>
+<Image>                   -  <ImageView>  -   <UiImageView>  -      <img>
+<ScrollView>              -  <ScrollView>  -  <UiScrollView> -      <div>
+<TextInput>               -  <EditText>    -  <UiTextField>  -      <input type="text">
+
+............
+
+new react native project
+
+npx create-expo-app@latest Corecomponents --template blank@sdk-49
+
+...
+
+press in the terminal: r to reload the app
+
+...
+
+in App.js file:
+
+import { View } from 'react-native'
+
+export default function App(){
+return <View style={{ flex:1, backgroundColor:"plum"}}></View>
+}
+
+...............
+
+<View style={{ width:200, height:200, backgroundColor:"lightblue"}}></View>
+
+...
+
+<View style={{ width:200, height:200, backgroundColor:"lightgreen", padding:60}}></View>
+
+...
+
+we can not use view component to display text:
+
+..
+
+import { View, Text } from "react-native";
+
+<Text> Hello World </Text>
+
+......
+
+ <Text>
+        <Text style={{ color: "white" }}> Hello </Text>World
+  </Text>
+
+......
+
+video 9 completed:
 
 
 
