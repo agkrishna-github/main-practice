@@ -432,10 +432,96 @@ export const Container = (props: ContainerProps) => {
 
 8 video completed:
 
+User.txt
+
+import {useState} from 'react'
+
+type AuthUser = {
+    name: string
+    email: string
+}
+
+export const User = () => {
+    const [user, setUser] = useState<AuthUser | null>(null)
+
+    const handleLogin = () => {
+        setUser({name: 'krishna', email:'krishna@gmail.com'})
+    }
+    const handleLogout = () => {
+        setUser(null)
+    }
+
+    return(
+        <div>
+            <h1>{user?.name}</h1>
+            <h1>{user?.email}</h1>
+        </div>
+    )
+}
+
+...........................
+
+const [user, setUser] = useState<AuthUser>({} as AuthUser)
+
+ return(
+        <div>
+            <h1>{user.name}</h1>
+            <h1>{user.email}</h1>
+        </div>
+    )
+
+.............
+
+Counter.tsx
+
+import {useReducer} from 'react'
+
+type CounterState = {
+    count: number
+}
+
+type CounterAction = {
+    type: string
+    payload: number
+}
+
+function reducer(state: CounterState, action: CounterAction){
+    switch(){
+
+    }
+}
+
+.....................
 
 
+type CounterAction = {
+    type: 'increment' | 'decrement'
+    payload: number
+}
+
+..........................
 
 
+type CounterState = {
+    count: number
+}
+
+
+type UpdateAction = {
+    type: 'increment' | 'decrement'
+    payload: number
+}
+
+
+type ResetAction = {
+    type: 'reset'
+}
+
+type CounterAction = UpdateAction | ResetAction
+
+.................
+
+video 13 completed
 
 
 
