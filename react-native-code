@@ -1,0 +1,118 @@
+npx create-expo-app@latest Helloworld
+
+...
+
+cd Helloworld
+
+...
+
+npm start
+
+....
+
+Download expo go app in device
+
+.......
+
+ensure the Compute and Mobile connected to the same wifi network
+
+.......
+
+if iphone open the camera app and scan the QR Code
+
+......
+
+if android use the QR CODE SCANNER with in the expo go app
+
+........
+
+Run app in ios simulator
+
+navigate to the folder and enter
+
+npm start
+
+...
+
+download excode from the app store and neccessory permission
+
+..
+
+press i
+
+...
+
+press i once again
+
+.....
+
+visit 
+
+developer.android.com/studio
+
+....
+
+
+install android studio
+
+...
+
+Launch the seup wizard and click "next" on the welcome screen 
+
+Choose the standard setup type and click "next"
+
+Proceed through the setup by selecting the desired color theme and accepting the terms
+
+Finally click on Finish on the final review screen
+
+.......
+
+in android studio app Click on more actions
+
+select virtual device manager 
+
+....
+
+if we want to create new device 
+
+click on the create device button
+
+select the category and name 
+
+click on next button
+
+and select the android api level
+
+select latest api 34
+
+Provide a name for virtual device 
+
+and click on finish
+
+...........
+
+run device by clicking play button
+
+.....
+
+press a for android in vscode terminal 
+
+....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
