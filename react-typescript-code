@@ -523,8 +523,226 @@ type CounterAction = UpdateAction | ResetAction
 
 video 13 completed
 
+App.tsx
+
+import { ThemeContextProvider } from './components/context/ThemeContext'
+import { Box } from './components/context/Box'
+
+function App(){
+    return(
+        <div>
+            <ThemeContextProvider>
+                <Box />
+            </ThemeContextProvider>
+        </div>
+    )
+}
 
 
+...............
+
+theme.ts
+
+export const theme = {
+  primary: {
+    main: '#3f51b5',
+    text: '#fff'
+  },
+  secondary: {
+    main: '#f50057',
+    text: '#fff'
+  }
+}
+
+
+........................
+
+ThemeContext.tsx
+
+import React, { createContext } from 'react'
+import { theme } from './theme'
+
+type ThemeContextProviderProps = {
+  children: React.ReactNode
+}
+
+const ThemeContext = createContext(theme)
+
+export const ThemeContextProvider = ({
+  children
+}: ThemeContextProviderProps) => {
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+}
+
+....
+
+Box.tsx
+
+import { useContext } from 'react'
+import { ThemeContext } from './ThemeContext'
+
+export const Box = () => {
+  const theme = useContext(ThemeContext)
+  return (
+    <div
+      style={{
+        backgroundColor: theme.primary.main,
+        color: theme.primary.text
+      }}>
+      Theme context
+    </div>
+  )
+}
+
+..............
+
+App.tsx
+
+import { UserContextProvider } from './components/context/UserContext'
+import { User } from './components/context/User'
+
+function App(){
+    return(
+        <div>
+            <UserContextProvider>
+                <User />
+            </UserContextProvider>
+        </div>
+    )
+
+}
+
+.................
+
+User.tsx
+
+import { useContext } from 'react'
+import { UserContext } from './UserContext'
+
+export const User = () => {
+  const userContext = useContext(UserContext)
+  const handleLogin = () => {
+    // if (userContext) {
+    userContext.setUser({
+      name: 'Vishwas',
+      email: 'asd@asd.com'
+    })
+    // }
+  }
+  const handleLogout = () => {
+    // if (userContext) {
+    userContext.setUser(null)
+    // }
+  }
+  return (
+    <div>
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogout}>Logout</button>
+      <div>User name is {userContext.user?.name}</div>
+      <div>User email is {userContext.user?.email}</div>
+      {/* <div>User name is {userContext?.user?.name}</div>
+      <div>User email is {userContext?.user?.email}</div> */}
+    </div>
+  )
+}
+
+.......
+
+UserContext.tsx
+
+import React, { useState, createContext } from 'react'
+
+type AuthUser = {
+  name: string
+  email: string
+}
+
+type UserContextType = {
+  user: AuthUser | null
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
+}
+
+type UserContextProviderProps = {
+  children: React.ReactNode
+}
+
+// export const UserContext = createContext<UserContextType | null>(null)
+
+export const UserContext = createContext({} as UserContextType)
+
+export const UserContextProvider = ({ children }: UserContextProviderProps) => {
+  const [user, setUser] = useState<AuthUser | null>(null)
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  )
+}
+
+.............
+
+App.tsx
+
+........
+
+DomRef.tsx
+
+import { useRef, useEffect } from 'react'
+
+export const DomRef = () => {
+
+  const inputRef = useRef<HTMLInputElement>(null!)
+//  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    inputRef.current.focus()
+// inputRef.current?.focus()
+
+  }, [])
+  return (
+    <div>
+      <input type='text' ref={inputRef} />
+    </div>
+  )
+}
+
+.......................
+
+MutableRef.tsx
+
+import { useState, useRef, useEffect } from 'react'
+
+export const MutableRef = () => {
+  const [timer, setTimer] = useState(0)
+  const interValRef = useRef<number | null>(null)
+
+  const stopTimer = () => {
+    if (interValRef.current) {
+      window.clearInterval(interValRef.current)
+    }
+  }
+  useEffect(() => {
+    interValRef.current = window.setInterval(() => {
+      setTimer(timer => timer + 1)
+    }, 1000)
+    return () => {
+      stopTimer()
+    }
+  }, [])
+
+  return (
+    <div>
+      HookTimer - {timer} -
+      <button onClick={() => stopTimer()}>Stop Timer</button>
+    </div>
+  )
+}
+
+...............
+
+16 videos completed
+
+App.tsx
 
 
 
