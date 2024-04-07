@@ -1,0 +1,24 @@
+
+.bgw {
+    background-color: white;
+}
+
+.bgb {
+    background-color: rgb(81, 77, 77);
+}
+
+
+.bgr {
+    background-color: rgb(218, 97, 97);
+}
+
+.bgg {
+    background-color: rgb(124, 216, 124);
+}
+
+.bgy {
+    background-color: rgb(217, 217, 113);
+}
+.bgbl {
+    background-color: rgb(111, 111, 214);
+}
