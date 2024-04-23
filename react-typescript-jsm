@@ -1,0 +1,115 @@
+npm create vite@latest
+
+.......................
+
+# npm 7+, extra double-dash is needed:
+
+npm create vite@latest my-typescript-app -- --template vanilla-ts
+
+............
+
+open the directory and run the command
+
+npm install..
+
+............
+
+npm run dev
+
+..........
+
+
+typescript types.
+
+HTMLButtonElement
+void
+HTMLDivElement
+number
+any
+
+
+
+//////////////////////////////////////////
+
+interface someValue {
+  name:string;
+  id:number
+}
+
+let somejob: someValue = {
+  name:'random',
+  id:123
+}
+
+console.log(somejob);
+
+.............
+
+npm run build
+
+...........
+
+let somename: string = "krishna"
+somename = "something";
+somename = somename.toUpperCase();
+console.log(somename)
+
+............
+
+if somename = 123   // typescript throws an error
+
+...............
+
+Union types: multiple this thing types:
+
+..........
+
+let tax: number | string = 10;
+tax = 100;
+tax = "rs 100"
+
+......................
+
+let requestStatus: 'pending' | 'success' | 'error' = 'pending'
+requestStatus = 'somevalue'     // not possible
+
+........................
+
+let notSure: any = 40;
+
+...............
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
