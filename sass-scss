@@ -1,0 +1,5 @@
+npm i -g sass
+
+,,,,,,,,,,
+
+sass -w .\app.sass app.css
