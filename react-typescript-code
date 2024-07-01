@@ -813,7 +813,126 @@ export default App
 
 ....
 
+Private.tsx
 
+
+import { Login } from '../components/Login'
+import { ProfileProps } from '../components/Profile'
+
+
+type PrivateProps = {
+    isLoggedIn: boolean
+    component: React.ComponentType<ProfileProps>
+}
+
+export const Private => ({ isLoggedIn, component:Component}: PrivateProps){
+if(isLoggedIn){
+    return <Component name="krishna" />
+}else {
+    return <Login />
+}
+}
+
+...
+
+Profile.tsx
+
+
+export type ProfileProps = {
+    name: string
+}
+
+export const Profile => ({ name}: ProfileProps){
+    return (
+<div>
+    Private Profile component name is {name}
+</div>
+    )
+}
+
+...
+
+Login.tsx
+
+export const Login => (){
+    return (
+<div>
+    Please login to continue
+</div>
+    )
+}
+
+............
+
+19 - video
+
+App.tsx
+
+
+import { List } from './components/generics/List'
+
+function App(){
+return (
+    <div>
+          {/* <List
+        items={['Batman', 'Superman', 'Wonder Woman']}
+        onClick={item => console.log(item)}
+      />
+      <List items={[1, 2, 3]} onClick={item => console.log(item)} /> */}
+      <List
+        items={[
+          {
+            id: 1,
+            first: 'Bruce',
+            last: 'Wayne'
+          },
+          {
+            id: 2,
+            first: 'Clark',
+            last: 'Kent'
+          },
+          {
+            id: 3,
+            first: 'Princess',
+            last: 'Diana'
+          }
+        ]}
+        onClick={item => console.log(item)}
+      />
+    </div>
+)
+}
+
+export default App
+...
+
+List.tsx
+
+type ListProps<T> = {
+  items: T[]
+  onClick: (value: T) => void
+}
+
+export const List = <T extends { id: number }>({
+  items,
+  onClick
+}: ListProps<T>) => {
+  return (
+    <div>
+      <h2>List of items</h2>
+      {items.map(item => {
+        return (
+          <div key={item.id} onClick={() => onClick(item)}>
+            {item.id}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+to be continued
+..............
 
 
 
