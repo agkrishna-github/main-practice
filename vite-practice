@@ -30,8 +30,7 @@ npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 .........................
 
-tailwind.config.js
-.........
+tailwind.config.js .......
 
   /** @type {import('tailwindcss').Config} */
 export default {
@@ -46,6 +45,25 @@ export default {
 }
 
 ....................
+
+tailwind.config.js .......
+
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+ corePlugins: {
+    preflight: false,
+  },
+}
+
+........................................
 
   index.css...
 
