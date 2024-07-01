@@ -1,0 +1,61 @@
+npm create vite@latest
+..................
+
+npm create vite@latest my-react-app -- --template react
+............
+
+npm create vite@latest my-react-app -- --template react-ts
+................
+
+npm create vite@latest my-react-app -- --template react-swc-ts
+...............
+
+cd my-project
+.............
+
+npm install
+npm run dev
+............
+
+Install Tailwind CSS with Vite:
+
+......................
+
+npm create vite@latest my-project -- --template react
+cd my-project
+
+.......................
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+.........................
+
+tailwind.config.js
+.........
+
+  /** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+....................
+
+  index.css...
+
+  @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+  ..............
+
+  npm run dev
+
+
+
