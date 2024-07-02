@@ -1231,9 +1231,113 @@ export const Toast = ({ position }: ToastProps) => {
   return <div>Toast Notification Position - {position}</div>
 }
 
+.........................
+
+video - 22
 
 
+import { Toast } from './components/Toast'
 
+function App(){
+return (
+    <div>
+        <CustomButton variant='primary' onClick={() => console.log('Clicked')}>
+        Button Label
+      </CustomButton>
+      </div>
+)}
+
+...............
+
+Button.tsx
+
+type ButtonProps = {
+  variant: 'primary' | 'secondary'
+  children: string
+} & Omit<React.ComponentProps<'button'>, 'children'>
+
+export const CustomButton = ({ variant, children, ...rest }: ButtonProps) => {
+  return (
+    <button className={`class-with-${variant}`} {...rest}>
+      {children}
+    </button>
+  )
+}
+
+.....................
+
+Input.tsx
+
+type InputProps = React.ComponentProps<'input'>
+
+export const Input = (props: InputProps) => {
+  return <input {...props} />
+}
+
+..............
+
+video - 23
+
+
+CustomComponent.tsx
+
+import React from 'react'
+import { Greet } from '../props/Greet'
+
+export const CustomComponent = (props: React.ComponentProps<typeof Greet>) => {
+  return <div>{props.name}</div>
+}
+
+..........
+
+video - 24
+
+import { Text } from './components/Toast'
+
+function App(){
+return (
+    <div>
+        <Text size='lg' as='h1'>
+        Heading
+      </Text>
+      <Text size='md' as='p'>
+        Paragraph
+      </Text>
+      <Text size='sm' color='secondary' as='label' htmlFor='someId'>
+        Label
+      </Text>
+      </div>
+)}
+
+.............
+
+Text.tsx
+
+import React from 'react'
+
+type TextOwnProps<E extends React.ElementType> = {
+  size?: 'sm' | 'md' | 'lg'
+  color?: 'primary' | 'secondary'
+  children: React.ReactNode
+  as?: E
+}
+
+type TextProps<E extends React.ElementType> = TextOwnProps<E> &
+  Omit<React.ComponentProps<E>, keyof TextOwnProps<E>>
+
+export const Text = <E extends React.ElementType = 'div'>({
+  size,
+  color,
+  children,
+  as
+}: TextProps<E>) => {
+  const Component = as || 'div'
+  return (
+    <Component className={`class-with-${size}-${color}`}>{children}</Component>
+  )
+}
+
+..............
 
 
 
