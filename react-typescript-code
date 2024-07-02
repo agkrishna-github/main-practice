@@ -866,6 +866,8 @@ export const Login => (){
 
 19 - video
 
+METHOD-1
+
 App.tsx
 
 
@@ -874,11 +876,178 @@ import { List } from './components/generics/List'
 function App(){
 return (
     <div>
-          {/* <List
+          <List
+        items={['Batman', 'Superman', 'Wonder Woman']}
+        onClick={item => console.log(item)}
+      />
+    </div>
+)
+}
+
+export default App
+...
+
+List.tsx
+
+type ListProps = {
+  items: string[]
+  onClick: (value: string) => void
+}
+
+export const List = ({
+  items,
+  onClick
+}: ListProps) => {
+  return (
+    <div>
+      <h2>List of items</h2>
+      {items.map((item, index) => {
+        return (
+          <div key={index} onClick={() => onClick(item)}>
+            {item}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+..............
+
+METHOD: 2
+
+App.tsx
+
+
+import { List } from './components/generics/List'
+
+function App(){
+return (
+    <div>
+           <List
+        items={['Batman', 'Superman', 'Wonder Woman']}
+        onClick={item => console.log(item)}
+      />
+      <List items={[1, 2, 3]} onClick={item => console.log(item)} /> 
+     
+)
+}
+
+export default App
+...
+
+List.tsx
+
+type ListProps = {
+  items: string[] | number[]
+  onClick: (value: string | number) => void
+}
+
+export const List = ({
+  items,
+  onClick
+}: ListProps) => {
+  return (
+    <div>
+      <h2>List of items</h2>
+      {items.map((item, index) => {
+        return (
+          <div key={index} onClick={() => onClick(item)}>
+            {item}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+.........................
+
+METHOD: 3
+
+App.tsx
+
+import { List } from './components/generics/List'
+
+function App(){
+return (
+    <div>
+           <List
+        items={['Batman', 'Superman', 'Wonder Woman']}
+        onClick={item => console.log(item)}
+      />
+      <List items={[1, 2, 3]} onClick={item => console.log(item)} />
+      <List
+        items={[
+          {
+          
+            first: 'Bruce',
+            last: 'Wayne'
+          },
+          {
+          
+            first: 'Clark',
+            last: 'Kent'
+          },
+          {
+          
+            first: 'Princess',
+            last: 'Diana'
+          }
+        ]}
+        onClick={item => console.log(item)}
+      />
+    </div>
+)
+}
+
+export default App
+...
+
+List.tsx
+
+type ListProps<T> = {
+  items: T[]
+  onClick: (value: T) => void
+}
+
+//export const List = <T extends {}>({
+export const List = <T extends string | number>({
+  items,
+  onClick
+}: ListProps<T>) => {
+  return (
+    <div>
+      <h2>List of items</h2>
+      {items.map((item, index) => {
+        return (
+          <div key={index} onClick={() => onClick(item)}>
+            {item}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+......................
+
+
+METHOD: 4
+
+App.tsx
+
+import { List } from './components/generics/List'
+
+function App(){
+return (
+    <div>
+        {/*   <List
         items={['Batman', 'Superman', 'Wonder Woman']}
         onClick={item => console.log(item)}
       />
       <List items={[1, 2, 3]} onClick={item => console.log(item)} /> */}
+
       <List
         items={[
           {
@@ -913,17 +1082,18 @@ type ListProps<T> = {
   onClick: (value: T) => void
 }
 
-export const List = <T extends { id: number }>({
+//export const List = <T extends {id: number}>({
+export const List = <T extends string | number>({
   items,
   onClick
 }: ListProps<T>) => {
   return (
     <div>
       <h2>List of items</h2>
-      {items.map(item => {
+      {items.map((item, index) => {
         return (
           <div key={item.id} onClick={() => onClick(item)}>
-            {item.id}
+            {item}
           </div>
         )
       })}
@@ -931,8 +1101,150 @@ export const List = <T extends { id: number }>({
   )
 }
 
-to be continued
-..............
+....................
+
+video - 20
+
+App.tsx
+
+import { RandomNumber } from './components/restriction/RandomNumber'
+
+
+function App(){
+return (
+    <div>
+          <RandomNumber value={10} isPositive />
+      </div>
+)}
+
+....................
+
+RandomNumber.tsx
+
+type RandomNumberType = {
+  value: number
+}
+
+type PositiveNumber = RandomNumberType & {
+  isPositive: boolean
+  isNegative?: never
+  isZero?: never
+}
+
+type NegativeNumber = RandomNumberType & {
+  isNegative: boolean
+  isPositive?: never
+  isZero?: never
+}
+
+type Zero = RandomNumberType & {
+  isZero: boolean
+  isPositive?: never
+  isNegative?: never
+}
+
+type RandomNumberProps = PositiveNumber | NegativeNumber | Zero
+
+export const RandomNumber = ({
+  value,
+  isPositive,
+  isNegative,
+  isZero
+}: RandomNumberProps) => {
+  return (
+    <div>
+      {value} {isPositive && 'positive'} {isNegative && 'negative'}{' '}
+      {isZero && 'zero'}
+    </div>
+  )
+}
+
+............................
+
+video - 21
+
+METHOD: 1
+
+import { Toast } from './components/Toast'
+
+
+function App(){
+return (
+    <div>
+         <Toast position='left-center' />
+      </div>
+)}
+
+...
+
+Toast.tsx
+
+
+/**
+ * Position prop can be one of
+ * "left-center" | "left-top" | "left-bottom" | "center" | "center-top" |
+ * "center-bottom" | "right-center" | "right-top" | "right-bottom"
+ */
+
+type HorizontalPosition = 'left' | 'center' | 'right'
+type VerticalPosition = 'top' | 'center' | 'bottom'
+
+type ToastProps = {position: `${HorizontalPosition}-${VerticalPosition}`}
+
+export const Toast = ({ position }: ToastProps) => {
+  return <div>Toast Notification Position - {position}</div>
+}
+
+..............................
+
+
+METHOD: 2
+
+import { Toast } from './components/Toast'
+
+function App(){
+return (
+    <div>
+        // <Toast position='center-center' />
+            <Toast position='center' />
+      </div>
+)}
+
+...
+
+Toast.tsx
+
+
+/**
+ * Position prop can be one of
+ * "left-center" | "left-top" | "left-bottom" | "center" | "center-top" |
+ * "center-bottom" | "right-center" | "right-top" | "right-bottom"
+ */
+
+type HorizontalPosition = 'left' | 'center' | 'right'
+type VerticalPosition = 'top' | 'center' | 'bottom'
+
+//type ToastProps = {position:Exclude<`${HorizontalPosition}-${VerticalPosition}`, 'center-center'>}
+type ToastProps = {position:Exclude<`${HorizontalPosition}-${VerticalPosition}`, 'center-center'> | 'center' }
+
+export const Toast = ({ position }: ToastProps) => {
+  return <div>Toast Notification Position - {position}</div>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
