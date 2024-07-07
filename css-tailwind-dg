@@ -111,6 +111,8 @@ npm init -y
 
 .....
 
+npm run tailwind
+
 npm run prettier
 
 ..........
@@ -121,6 +123,18 @@ npm i -D prettier-plugin-tailwindcss
 
 .gitignore
 
+.....
+
+to add js files also
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./build/*.html","./build/js/*.js"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
 
 
 
