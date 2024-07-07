@@ -67,6 +67,10 @@ css > lint : select ignore
 
 ..................
 
+npx tailwindcss -i ./src/input.css -o ./build/css/style.css
+
+............
+
 <link rel="stylesheet" href="css/style.css">
 
 ............
