@@ -24,11 +24,11 @@ npx tailwindcss init
 
 create a folder as build
 
+................
+
+create index.html page
+
 .................
-
-create a folder as src
-
-..............
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -40,6 +40,12 @@ module.exports = {
 };
 
 ..........................
+
+create a folder as src
+
+...............
+
+src/input.css
 
 @tailwind base;
 @tailwind components;
