@@ -16,7 +16,7 @@ git config --list
 
 git clone <repository link>
 
-ls -a
+ls -a    // to display the hidden files of the folder
 
 git status
 
