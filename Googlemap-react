@@ -1,0 +1,84 @@
+import React, { useState } from "react";
+import {
+  GoogleMap,
+  useJsApiLoader,
+
+  StandaloneSearchBox,
+ 
+} from "@react-google-maps/api";
+import { useRef } from "react";
+
+
+
+const GmapPage = () => {
+
+
+  const startInputRef = useRef(null);
+  const endInputRef = useRef(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: "AIzaSyAf4vRvjVvt-AuStWjrfbA-tJNYouHBpb4",
+    libraries: ["places"],
+  });
+
+ 
+
+  const handleOnPlacesChangedStart = () => {
+    let address = startInputRef.current.getPlaces();
+    console.log("address", address);
+  };
+
+  const handleOnPlacesChangedEnd = () => {
+    let address = endInputRef.current.getPlaces();
+    console.log("address", address);
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-10">
+      <div>
+        <div className="mt-10">
+          {isLoaded && (
+            <div>
+              <div className="">
+                <label htmlFor="">Dealer Location</label>
+                <StandaloneSearchBox
+                  onLoad={(ref) => (startInputRef.current = ref)}
+                  onPlacesChanged={handleOnPlacesChangedStart}
+                >
+                  <input
+                    type="text"
+                    placeholder=""
+                    className="p-3 w-[400px] mt-2"
+                  />
+                </StandaloneSearchBox>
+              </div>
+              <div className="mt-10">
+                <label htmlFor="">Customer Location</label>
+                <StandaloneSearchBox
+                  onLoad={(ref) => (endInputRef.current = ref)}
+                  onPlacesChanged={handleOnPlacesChangedEnd}
+                >
+                  <input
+                    type="text"
+                    placeholder=""
+                    className="p-3 w-[400px] mt-2"
+                  />
+                </StandaloneSearchBox>
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
+        
+        </div>
+      </div>
+      <div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GmapPage;
