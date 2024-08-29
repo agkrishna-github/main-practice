@@ -1,0 +1,339 @@
+import React, { useEffect, useState, useRef } from "react";
+import ReactMapGl, {
+  FullscreenControl,
+  GeolocateControl,
+  NavigationControl,
+  Marker,
+  Source,
+  Layer,
+} from "react-map-gl";
+import Instructions from "./Instructions";
+import axios from "axios";
+
+const PickupPage = () => {
+  const [address, setAddress] = useState({
+    streetAndNumber: "",
+    place: "",
+    region: "",
+    postcode: "",
+    county: "",
+    latitude: "",
+    longitude: "",
+  });
+
+  const [marker, setMarker] = useState({
+    latitude: 78.4584,
+    longitude: 17.4237,
+    /* latitude: address.latitude,
+    longitude: address.longitude, */
+  });
+
+  const [viewport, setViewport] = useState({
+    latitude: address.latitude,
+    longitude: address.longitude,
+    zoom: 2,
+  });
+
+  /* const [viewState, setViewState] = useState({
+    // longitude: -100,
+    // latitude: 40,
+    longitude: 78.476,
+    latitude: 17.366,
+    zoom: 7.5,
+  }); */
+
+  // const [start, setStart] = useState([-73, 42]);
+  // const [end, setEnd] = useState([-73, 42.7]);
+  const [start, setStart] = useState([78.476, 17.366]);
+  const [end, setEnd] = useState([78.476, 17.9]);
+  const [coords, setCoords] = useState([]);
+  const [steps, setSteps] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+
+  const GeolocateControlRef = useRef();
+
+  useEffect(() => {
+    getRoute();
+    GeolocateControl.current?.trigger();
+  }, [end, GeolocateControlRef]);
+
+  useEffect(() => {
+    setViewport((oldViewport) => ({
+      ...oldViewport,
+      latitude: address.latitude,
+      longitude: address.longitude,
+    }));
+  }, [address.latitude, address.longitude]);
+
+  const getRoute = async () => {
+    /*  const response = await fetch(
+       `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=pk.eyJ1IjoiYWdrLWdvcGlrcmlzaG5hLTQwMDUiLCJhIjoiY20wNWF0bzZpMGN2ZTJsc2JkOXcwYTgzaCJ9.6N-D_xQPv98XH19LFXAQPQ}`
+     ); */
+    const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?` +
+        new URLSearchParams({
+          access_token:
+            "pk.eyJ1IjoiYWdrLWdvcGlrcmlzaG5hLTQwMDUiLCJhIjoiY20wNWF0bzZpMGN2ZTJsc2JkOXcwYTgzaCJ9.6N-D_xQPv98XH19LFXAQPQ",
+          steps: true,
+          geometries: "geojson",
+        })
+    );
+    /* const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?` +
+        new URLSearchParams({
+          access_token:
+            "pk.eyJ1IjoiYWdrLWdvcGlrcmlzaG5hLTQwMDUiLCJhIjoiY20wNWF0bzZpMGN2ZTJsc2JkOXcwYTgzaCJ9.6N-D_xQPv98XH19LFXAQPQ",
+          steps: true,
+          geometries: "geojson",
+        })
+    ); */
+
+    const data = await response.json();
+    console.log(data);
+    const coords = data.routes[0].geometry.coordinates;
+
+    setCoords(coords);
+    const steps = data.routes[0].legs[0].steps;
+    setSteps(steps);
+  };
+
+  const geojson = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [...coords],
+        },
+      },
+    ],
+  };
+
+  const lineStyle = {
+    id: "roadLayer",
+    type: "line",
+    layout: {
+      "line-join": "round",
+      "line-cap": "round",
+    },
+    paint: {
+      "line-color": "blue",
+      "line-width": 4,
+      "line-opacity": 0.75,
+    },
+  };
+
+  const endPoint = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "feature",
+        geometry: {
+          type: "Point",
+          coordinates: [...end],
+        },
+      },
+    ],
+  };
+
+  const layerEndpoint = {
+    id: "end",
+    type: "circle",
+    source: {
+      type: "geojson",
+      data: "end",
+    },
+    paint: {
+      "circle-radius": 10,
+      "circle-color": "#f30",
+    },
+  };
+
+  const getPlaces = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`,
+        {
+          params: {
+            access_token:
+              "pk.eyJ1IjoiYWdrLWdvcGlrcmlzaG5hLTQwMDUiLCJhIjoiY20wNWF0bzZpMGN2ZTJsc2JkOXcwYTgzaCJ9.6N-D_xQPv98XH19LFXAQPQ",
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleManualInputChange = (event, stateProperty) => {
+    const newAddress = { ...address };
+    newAddress[stateProperty] = event.target.value;
+
+    setAddress(newAddress);
+  };
+
+  const handleChange = (event) => {
+    handleManualInputChange(event, "streetAndNumber");
+    handleInputChange(event.target.value);
+  };
+
+  const handleInputChange = async (query) => {
+    const suggesions = await getPlaces(query);
+    setSuggestions(suggesions);
+  };
+
+  const handleClick = (e) => {
+    const newEnd = e.lngLat;
+    const endPoint = Object.keys(newEnd).map((item, i) => newEnd[item]);
+    console.log(endPoint);
+    setEnd(endPoint);
+  };
+
+  const updateCoordinates = (latitude, longitude) => {
+    setAddress({ ...address, latitude, longitude });
+  };
+
+  const handleMarkerDrag = (event) => {
+    const latitude = event.lngLat.lat;
+    const longitude = event.lngLat.lng;
+
+    setMarker({ latitude, longitude });
+    setAddress({ ...address, latitude, longitude });
+    updateCoordinates(latitude, longitude);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    const streetAndNumber = suggestion.place_name.split(",")[0];
+    const latitude = suggestion.center[1];
+    const longitude = suggestion.center[0];
+
+    const address = {
+      streetAndNumber,
+      place: "",
+      region: "",
+      postcode: "",
+      country: "",
+      latitude,
+      longitude,
+    };
+
+    suggestion.context.forEach((element) => {
+      const identifier = element.id.split(".")[0];
+
+      address[identifier] = element.text;
+    });
+
+    console.log(address.longitude, address.latitude);
+
+    setAddress(address);
+    setSuggestions([]);
+  };
+
+  return (
+    /*    <div className="w-screen " style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-slate-400 w-5/6 mx-auto p-5">
+        <h1>Pick up page</h1> */
+    <section className="grid grid-cols-2 gap-10">
+      <div>
+        {
+          <article className="min-h-[500px] mt-10">
+            <div className="mt-10">
+              <label htmlFor=""> Where From</label>
+              <input
+                type="text"
+                className="p-1 border-[1px] w-full rounded-md mt-5 outline-none focus:border-yellow-300"
+                value={address.streetAndNumber}
+                onChange={handleChange}
+              />
+              <ul className="addressSuggestions">
+                {suggestions?.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.place_name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-10">
+              <label htmlFor=""> Where To</label>
+              <input
+                type="text"
+                className="p-1 border-[1px] w-full rounded-md mt-5 outline-none focus:border-yellow-300"
+              />
+            </div>
+          </article>
+        }
+      </div>
+      <div>
+        <ReactMapGl
+          // {...viewState}
+          {...viewport}
+          onClick={handleClick}
+          // onMove={(evt) => setViewState(evt.viewState)}
+          onMove={(evt) => setViewport(evt.viewState)}
+          mapStyle="mapbox://styles/agk-gopikrishna-4005/cm05b3dsz00fm01pda5t5e6ww"
+          mapboxAccessToken="pk.eyJ1IjoiYWdrLWdvcGlrcmlzaG5hLTQwMDUiLCJhIjoiY20wNWF0bzZpMGN2ZTJsc2JkOXcwYTgzaCJ9.6N-D_xQPv98XH19LFXAQPQ"
+          style={{ width: "400px", height: "400px" }}
+        >
+          <Source id="routeSource" type="geojson" data={geojson}>
+            <Layer {...lineStyle} />
+          </Source>
+          <Source id="endSource" type="geojson" data={endPoint}>
+            <Layer {...layerEndpoint} />
+          </Source>
+
+          <GeolocateControl
+            ref={GeolocateControlRef}
+            showAccuracyCircle={false}
+            onGeolocate={(e) =>
+              setStart([e.coords.longitude, e.coords.latitude])
+            }
+          />
+          <FullscreenControl />
+          <NavigationControl />
+          <Marker
+            /*  longitude={start[0]}
+          latitude={start[1]} */
+            latitude={marker.latitude}
+            longitude={marker.longitude}
+            draggable={true}
+            onDragEnd={handleMarkerDrag}
+          />
+        </ReactMapGl>
+      </div>
+      {/*  <article className="bg-slate-800 rounded-md px-5 py-3 max-h-[50vh]">
+        {steps.map((item, i) => {
+          return (
+            <div className="flex flex-col gap-2" key={i}>
+              <Instructions no_={i + 1} step={item.maneuver.instruction} />
+            </div>
+          );
+        })}
+      </article> */}
+      {/*  <article className="min-h-[500px] mt-10">
+        <div className="mt-10">
+          <label htmlFor=""> Where From</label>
+          <input
+            type="text"
+            className="p-1 border-[1px] w-full rounded-md mt-5 outline-none focus:border-yellow-300"
+          />
+        </div>
+        <div className="mt-10">
+          <label htmlFor=""> Where To</label>
+          <input
+            type="text"
+            className="p-1 border-[1px] w-full rounded-md mt-5 outline-none focus:border-yellow-300"
+          />
+        </div>
+      </article> */}
+    </section>
+    /*   </div>
+    </div> */
+  );
+};
+
+export default PickupPage;
