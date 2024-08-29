@@ -17,6 +17,11 @@ module.exports = {
   ],
   theme: {
     extend: {},
+    screens: {
+      lg: { max: "2023px" },
+
+      md: { max: "720px" },
+    },
   },
   plugins: [],
  corePlugins: {
