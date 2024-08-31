@@ -1,0 +1,22 @@
+
+  const geo = navigator.geolocation;
+  let watchID;
+
+  useEffect(() => {
+    geo.getCurrentPosition(userCoords);
+    function userCoords(position) {
+      let userLatitude = position.coords.latitude;
+      let userLongitude = position.coords.longitude;
+      console.log("latitude", userLatitude);
+      console.log("longitude", userLongitude);
+    }
+
+    watchID = geo.watchPosition(userGpsCoords);
+    function userGpsCoords(position) {
+      console.log(position);
+      let userGpsLatitude = position.coords.latitude;
+      let userGpsLongitude = position.coords.longitude;
+      console.log("gpslatitude", userGpsLatitude);
+      console.log("gpslongitude", userGpsLongitude);
+    }
+  }, [did]);
