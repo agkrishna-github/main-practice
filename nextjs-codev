@@ -1,0 +1,491 @@
+nodejs.org;
+visual studio code.
+
+in terminal:
+
+npx create-next-app@latest project-name
+
+enter folder name 
+
+npm run dev
+
+Routing Conventions:
+
+All routes must be placed inside the app folder
+
+Every file that corresponds to a route must be named page.js or page.tsx
+
+src
+src/app
+src/app/page.tsx
+
+file name: page.tsx
+
+export default function Home(){
+    return <p>Welcome home </p>
+}
+
+.........
+
+src/app/about/page.tsx
+
+export default function About(){
+    return <p>Welcome About Page </p>
+}
+
+.............
+
+
+src/app/profile/page.tsx
+
+
+export default function Profile(){
+    return <p>Welcome Profile Page </p>
+}
+
+.......
+
+src/app/blog/page.tsx
+
+
+export default function Blog(){
+    return <p>Welcome Blog Page </p>
+}
+
+..........
+
+src/app/blog/first/page.tsx
+
+
+export default function FirstBlog(){
+    return <p>first blog post</p>
+}
+
+..........
+
+
+src/app/blog/second/page.tsx
+
+
+export default function SecondBlog(){
+    return <p>Second blog post</p>
+}
+
+..........
+
+search url : localhost:3000/blog/first
+
+search url : localhost:3000/blog/second
+.............
+
+src/app/products/[productId]/page.tsx
+
+
+export default function ProductDetails ({ params }:{ params: { productId:string }}){
+
+    console.log(props)
+    console.log(params)
+
+    return <p>Product Detais about { params.productId} </p>
+}
+
+..........
+
+src/app/products/[productId]/reviews/[reviewId]/page.tsx
+
+
+export default function ReviewDetail ({ params }:{ params: { productId:string; reviewId: string }}){
+
+ 
+    return <p> Review { params.reviewId} for product { params.productId } </p>
+}
+
+
+..........
+
+CATCH ALL SEGMENTS ROUTE:
+...
+
+src/app/docs/[...slug]/page.tsx
+
+
+export default function Docs ({ params }:{ params: { slug: string[] }}){
+
+ 
+    if(params.slug.length === 2) {
+        return (
+            <h1>
+                Viewing docs for feature {params.slug[0]} and concept { params.slug[1]}
+            </h1>
+        )
+    }else if ( params.slug.length === 1){
+        return <h1>Viewing docs for feature {params.slug[0]</h1>
+    }
+
+    return <p> Docs Home page </p>
+}
+}
+
+...........
+
+in url search : localhost:3000/docs/routing 
+in url search : localhost:3000/docs/routing/catch-all-segments
+
+...
+
+src/app/docs/[[...slug]]/page.tsx
+
+if we dont want error in search : localhost:3000/docs
+
+................
+
+to create custom not found page:
+
+
+src/app/not-found.tsx
+
+export default function NotFound() {
+    return (
+        <div>
+            <h2>Page Not Found </h2>
+        </div>
+    )
+}
+
+........
+
+
+src/app/products/[productId]/reviews/[reviewId]/page.tsx
+
+import { notFound } from 'next/navigation'
+
+
+export default function ReviewDetail ({ params }:{ params: { productId:string; reviewId: string }}){
+
+    if(parseInt(params.reviewId > 1000){
+        notFound()
+    })
+
+    return <p> Review { params.reviewId} for product { params.productId } </p>
+}
+
+
+................
+
+method:2
+
+src/app/products/[productId]/reviews/[reviewId]/not-found.tsx
+
+
+export default function NotFound(){
+    return (
+        <div>
+            Review Not Found
+        </div>
+    )
+}
+
+..................
+
+"%5F"
+
+...........
+
+src/app/register/page.tsx
+
+
+export default function Register(){
+    return (
+        <div>
+            Register
+        </div>
+    )
+}
+
+...............
+
+Route groups:
+
+src/app/auth/register/page.tsx
+src/app/auth/login/page.tsx
+src/app/auth/forgot-password/page.tsx
+
+
+also we can omit the auth word in url
+
+src/app/(auth)/forgot-password/page.tsx
+
+...........
+
+
+LAYOUTS:
+
+src/app/products/[productId]/layout.tsx
+
+
+export default function ProductDetailsLayout( {children }: { children: React.ReactNode }){
+    return (
+        <>
+            {children}
+            <h2>Features Products</h2>
+        </>
+    )
+}
+
+.............
+
+
+METADATA METHODS:
+
+
+src/app/products/[productId]/page.tsx
+
+import { Metadata } from 'next'
+
+type Props = {
+    params: {
+        productId: string
+    }
+}
+
+
+export const generateMetadata ({ params }: Props): Metadata => {
+
+  
+    return {
+        title: `Product ${params.productId}`,
+    }
+}
+
+
+export default function ProductDetails ({ params }: Props){
+
+  
+    return <p>Product Detais about { params.productId} </p>
+}
+
+..............
+
+NAVIGATION:
+
+src/app/page.tsx
+
+import Link from 'next/link'
+
+export default function Home (){
+    return (
+        <>
+            <Link href="/"> Blog </Link>
+            <Link href="/blog"> Blog </Link>
+            <Link href="/blog/2" replace> Blog </Link>
+        </>
+    )
+}
+
+...............
+
+Active Links:
+
+
+"use client"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+
+const navLinks = [
+    { name:'Register', href:"/register"},
+    { name:'Login', href:"/login"},
+    { name:'Forgot Password', href:"/forgot-password"},
+]
+
+
+export default function AuthLayout () {
+
+    const pathname = usePathname()
+
+    return (
+        <div>
+
+
+                {
+                    navLinks.map((link) => {
+                        const isActive = pathname.startsWith(link.href)
+                        return (
+                            <Link href={link.href} key={link.name} 
+                                className={isActive ? "bg-white" : "bg-black"}
+                            >
+                                {link.name}
+                            </Link>
+                        )
+                    })
+                }
+        </div>
+    )
+}
+
+......................
+
+NAVIGATION PROGRAMATICALLY:
+
+"use client"
+import { useRouter } from 'next/navigation'
+
+export default function OrderProduct() {
+
+const router = useRouter()
+
+const handleClick = () => {
+    router.push('/')
+    router.replace('/')
+    router.back()
+    router.forward()
+}
+
+    return (
+        <>
+            Order Product
+            <button onClick={handleClick}> Place order</button>
+        </>
+    )
+}
+
+........................
+
+
+
+"use client"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+
+
+const navLinks = [
+    { name:'Register', href:"/register"},
+    { name:'Login', href:"/login"},
+    { name:'Forgot Password', href:"/forgot-password"},
+]
+
+
+export default function AuthLayout () {
+
+    const pathname = usePathname()
+    const [input, setInput] = useState('')
+
+
+    return (
+        <div>
+
+
+                {
+                    navLinks.map((link) => {
+                        const isActive = pathname.startsWith(link.href)
+                        return (
+                            <Link href={link.href} key={link.name} 
+                                className={isActive ? "bg-white" : "bg-black"}
+                            >
+                                {link.name}
+                            </Link>
+                        )
+                    })
+                }
+        </div>
+    )
+}
+
+..................
+
+loading.tsx
+
+.................
+
+23 video completed
+
+
+src/app/products/[productId]/reviews/[reviewId]/error.tsx
+
+error.tsx
+
+"use client"
+
+export default function ErrorBoundary ({ error } : { error: Error}) {
+  //  return <div>{ error.message } </div>
+  //  return <div>Error in loading review </div>
+}
+
+
+// the error.message is from 
+
+
+src/app/products/[productId]/reviews/[reviewId]/page.tsx
+
+
+throw new Error('Error in loading Review')
+
+......................
+
+
+
+src/app/products/[productId]/reviews/[reviewId]/error.tsx
+
+
+
+"use client"
+
+export default function ErrorBoundary ({ error, reset } : { error: Error; reset: ()=> void }) {
+    
+    return(
+
+    <>
+
+    <div>{ error.message } </div>
+    <button onClick={reset}>Try again</button>
+    </>
+    ) 
+  
+}
+
+.............
+
+PARALLEL ROUTES:
+
+src/app/complex-dashboard/layout.tsx
+
+..............
+
+Un matched Routes:
+
+src/app/complex-dashboard/default.tsx
+
+............
+
+Intercepting route
+
+src/app/f1/(.)f2/page.tsx
+src/app/f2/page.tsx
+
+...............
+
+Route Handlers
+
+...............
+
+REDIRECT IN ROUTE HANDLERS
+
+..............
+
+MIDDLEWARES:
+
+src/middlewares
+
+..................
+
+RENDERING DEMO:
+
+RENDERING-DEMO : REPO
+
+
+
+
+
+
+
