@@ -1,0 +1,67 @@
+      <section className="bg-red-400 min-h-[100px] mb-2">section 1</section>
+
+      <section className="bg-red-400 min-h-[100px] flex justify-center items-center mb-2">
+        <div className="bg-blue-400 w-5/6  min-h-[85px]">section 2</div>
+      </section>
+
+    
+
+      <section className="bg-red-400 min-h-[100px] flex justify-center items-center gap-2 px-3 mb-2">
+        <div className="bg-blue-400 min-w-[50%] min-h-[85px]">section-3</div>
+        <div className="bg-blue-400 min-w-[50%] min-h-[85px]">section-4</div>
+      </section>
+
+
+
+      <section className="bg-red-400 min-h-[100px] px-3 mb-2">
+        <section className="bg-red-400 min-h-[100px] flex justify-center items-center mb-2">
+          <div className="bg-blue-400 w-5/6  min-h-[85px]">section 5</div>
+        </section>
+        <section className="bg-red-400 min-h-[100px] flex justify-center items-center gap-2 px-3 mb-2">
+          <div className="bg-blue-400 min-w-[50%] min-h-[85px]">section-6</div>
+          <div className="bg-blue-400 min-w-[50%] min-h-[85px]">section-7</div>
+        </section>
+      </section>
+
+-----------------------
+
+
+      <section className="bg-red-400 min-h-[100px] flex justify-center items-center gap-2 px-3 mb-2">
+        <div className="bg-blue-400 min-h-[85px]">section 8</div>
+        <div className="bg-blue-400 min-h-[85px]">section 9</div>
+      </section>
+
+
+      <section className="bg-red-400 min-h-[100px] flex justify-between items-center gap-2 px-3 mb-2">
+        <div className="bg-blue-400 min-h-[85px]">section 10</div>
+        <div className="bg-blue-400 min-h-[85px]">section 11</div>
+      </section>
+
+
+      <section className="bg-red-400 min-h-[100px] flex justify-around items-center gap-2 px-3 mb-2">
+        <div className="bg-blue-400 min-h-[85px]">section 12</div>
+        <div className="bg-blue-400 min-h-[85px]">section 13</div>
+      </section>
+
+
+
+      <section className="bg-red-400 min-h-[100px] flex justify-evenly items-center gap-2 px-3 mb-2">
+        <div className="bg-blue-400 min-h-[85px]">section 14</div>
+        <div className="bg-blue-400 min-h-[85px]">section 15</div>
+      </section>
+
+
+      <section className="bg-red-400 min-h-[100px] flex justify-between items-center gap-2 px-3 mb-2">
+        <div className="flex gap-2">
+          <div className="bg-blue-400 min-h-[85px]">section 16</div>
+          <div className="bg-blue-400 min-h-[85px]">section 17</div>
+        </div>
+        <div className="flex gap-2">
+          <div className="bg-blue-400 min-h-[85px]">section 18</div>
+          <div className="bg-blue-400 min-h-[85px]">section 19</div>
+        </div>
+      </section>
+
+
+
+
