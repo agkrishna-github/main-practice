@@ -1,0 +1,65 @@
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthProvider";
+import * as XLSX from "xlsx";
+
+const BranchPage = () => {
+  const { auth, setAuth } = useAuth();
+  const [employeeData, setEmployeeData] = useState([]);
+
+  const handleFileUpload = (e) => {
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(e.target.files[0]);
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const workbook = XLSX.read(data, { type: "binary" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const parsedData = XLSX.utils.sheet_to_json(sheet);
+      setEmployeeData(parsedData);
+    };
+  };
+
+  console.log(employeeData);
+
+  return (
+    <section className="bg-red-400 min-w-full min-h-screen pt-5">
+      <div className="bg-white w-5/6 h-[100px] mx-auto rounded-lg flex justify-center items-center mb-5">
+        <h3>{(auth?.user.user).toUpperCase()} Branch</h3>
+      </div>
+      <div className="bg-white w-5/6 mx-auto min-h-11 rounded-lg p-6">
+        <div className="mt-3 bg-green-400">
+          <h4 className="mb-3">Upload Employee list</h4>
+          <div className="mb-3">
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileUpload}
+            />
+          </div>
+          {employeeData?.length > 0 && (
+            <table>
+              <thead>
+                <tr>
+                  {Object.keys(employeeData[0]).map((key) => (
+                    <th key={key}>{key}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {employeeData?.map((row, index) => (
+                  <tr key={index}>
+                    {Object.values(row).map((value, index) => (
+                      <td key={index}>{value}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default BranchPage;
