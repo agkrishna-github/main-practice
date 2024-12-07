@@ -1,0 +1,116 @@
+import { useEffect } from "react";
+import { useState } from "react";
+import { useRef } from "react";
+
+function App() {
+  const toggleRef = useRef();
+  const [sideTo, setSideTo] = useState(false);
+
+  const sideToggle = () => {
+    /*  !sideTo
+      ? (toggleRef.current.style.width = "80%")
+      : (toggleRef.current.style.width = "0px"); */
+  };
+
+  useEffect(() => {
+    sideTo
+      ? (toggleRef.current.style.left = "0")
+      : (toggleRef.current.style.left = "-100%");
+  }, [sideTo]);
+
+  return (
+    <section className="p-3 bg-green-500 sm:bg-pink-500 md:bg-blue-500 lg:bg-orange-500 relative">
+      <div className="border-2 border-black flex justify-around flex-wrap ">
+        <div className="border-2 border-blue-500 py-2 px-10">hello</div>
+        <div className="border-2 border-red-500 py-2 px-10 flex gap-4">
+          <a href="#" className="sm:hidden">
+            HOME
+          </a>
+          <a href="#a" className="sm:hidden">
+            SERVICE
+          </a>
+          <h3 className="hidden sm:block" onClick={() => setSideTo(!sideTo)}>
+            x
+          </h3>
+        </div>
+        <div
+          className="absolute top-0 w-[80%] left-0 h-screen  bg-[rgba(0,0,0,0.9)] text-white overflow-scroll"
+          ref={toggleRef}
+        >
+          <div className="text-white" onClick={() => setSideTo(!sideTo)}>
+            X
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit
+            maiores optio exercitationem iste eius temporibus corporis veritatis
+            necessitatibus reiciendis! Sit numquam quaerat minus tempora iusto
+            rerum aspernatur ab vel odit ad accusantium, ea doloremque officia
+            quia expedita culpa repellendus unde reiciendis placeat veritatis!
+            Sapiente, et culpa. Excepturi, dolorum. Assumenda cum nemo ut
+            placeat explicabo vitae quo expedita voluptatum possimus voluptates
+            error id architecto aliquid reprehenderit exercitationem ducimus,
+            iure animi ab. Vitae non architecto qui quisquam ratione molestias
+            error, dolores blanditiis! Quisquam ducimus doloribus unde quam
+            dignissimos, tempore vel nobis nostrum pariatur voluptatum eligendi
+            quidem commodi architecto est expedita perferendis modi dolorum
+            maxime fugit consectetur obcaecati deserunt ab laborum. Corporis
+            dolore aut, nam assumenda provident saepe beatae dolorem magni,
+            aperiam quibusdam aliquid placeat. Rem molestias quibusdam nulla,
+            facere perspiciatis obcaecati ex consequatur impedit temporibus
+            earum laborum odit rerum ipsam quaerat dignissimos, suscipit ducimus
+            voluptate! Cupiditate rerum aspernatur quis obcaecati corporis! Enim
+            ad, obcaecati quibusdam perspiciatis error, in sit tenetur,
+            repellendus quasi nostrum facere suscipit itaque et consectetur
+            ullam dolorum aperiam molestias dolore consequatur! Quasi corrupti
+            sint quo officia obcaecati odio laudantium fugit voluptatibus
+            cupiditate qui consectetur velit, debitis aperiam officiis. Autem
+            perspiciatis incidunt nemo necessitatibus excepturi reprehenderit
+            dolore, nostrum soluta. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Aut at, fugiat sed commodi labore dolorem ex
+            nostrum inventore, nemo esse sint unde. Commodi harum nesciunt
+            explicabo asperiores mollitia velit. Veniam nisi ipsum omnis cumque!
+            Sunt corporis ipsum alias aperiam recusandae accusantium itaque
+            repellendus, aliquam quibusdam modi commodi molestiae, quam incidunt
+            harum nihil veritatis iusto vero, dolorum dolores eaque est tenetur
+            officiis! Eius quia assumenda dolore voluptas provident, esse qui
+            dicta porro praesentium blanditiis totam cumque? Minima sunt illo
+            nemo soluta, saepe modi ullam nesciunt corporis pariatur laborum
+            blanditiis similique, ducimus excepturi dolorem aspernatur quam
+            fugit at nihil eveniet? Voluptatem ullam veritatis accusantium
+            corrupti sunt assumenda quisquam rem debitis temporibus natus sequi
+            minima, nisi dicta quas! Exercitationem eum quo, neque nisi vitae
+            animi laborum non cum, modi hic libero consequuntur commodi fuga ad
+            quas? Ea ab facilis labore. Unde reiciendis quidem mollitia! Aliquam
+            perferendis eos, excepturi ab reprehenderit consectetur beatae dolor
+            ullam quam, reiciendis quia voluptates tempore nulla nesciunt sit
+            odio magni eum voluptatum eveniet velit, ducimus alias totam. Dolore
+            sint harum eius excepturi? Accusantium voluptatem modi dolore
+            tempora enim impedit. Minus fugit, accusantium libero rerum
+            reiciendis totam amet consectetur aliquam corporis, quaerat eum
+            reprehenderit blanditiis corrupti doloremque ipsa sint tenetur.
+          </p>
+        </div>
+      </div>
+      <div className="border-2 border-black">Hello</div>
+      <div className="border-2">Hello</div>
+      <div className="border-2">Hello</div>
+      <div className="border-2">Hello</div>
+      <div className="border-2">Hello</div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <h1>heading 1</h1>
+      <h2>heading 2</h2>
+      <h3>heading</h3>
+      <h4>heading</h4>
+      <h5>heading</h5>
+      <h6>heading</h6>
+      <p>paragraph</p>
+      <div>div</div>
+      <a href="">anchor</a>
+    </section>
+  );
+}
+
+export default App;
